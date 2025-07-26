@@ -143,32 +143,24 @@
       const genres = genresInput.split(',').map(g => g.trim()).filter(Boolean);
       const pace = parseFloat(paceInput);
 
-      const sampleSongs = [
-        { title: 'Run the World', artist: 'Beyonce', genre: 'Pop', tempo: 120 },
-        { title: 'Fast Lane', artist: 'Drake', genre: 'Hip-Hop', tempo: 130 },
-        { title: 'Chase the Light', artist: 'Imagine Dragons', genre: 'Rock', tempo: 125 },
-        { title: 'Miles Ahead', artist: 'Alicia Keys', genre: 'Soul', tempo: 115 },
-        { title: 'Endurance', artist: 'Eminem', genre: 'Hip-Hop', tempo: 128 }
-      ];
+      const params = new URLSearchParams();
+      if (artists.length) params.append('artists', artists.join(','));
+      if (genres.length) params.append('genres', genres.join(','));
+      if (!isNaN(pace)) params.append('pace', pace);
 
-      const desiredTempo = pace ? (240 / pace) : 120;
-      let filtered = sampleSongs.filter(song => {
-        const matchA = artists.length ? artists.some(a => song.artist.toLowerCase().includes(a.toLowerCase())) : true;
-        const matchG = genres.length ? genres.some(g => song.genre.toLowerCase().includes(g.toLowerCase())) : true;
-        const tempoMatch = Math.abs(song.tempo - desiredTempo) < 15;
-        return matchA && matchG && tempoMatch;
-      });
-
-      if (filtered.length === 0) filtered = sampleSongs;
-
-      const container = document.getElementById('playlistResults');
-      container.innerHTML = '<h3>Your Playlist</h3>';
-      filtered.forEach(song => {
-        const div = document.createElement('div');
-        div.className = 'song';
-        div.textContent = `${song.title} - ${song.artist} (${song.tempo} BPM)`;
-        container.appendChild(div);
-      });
+      fetch(`/songs?${params.toString()}`)
+        .then(r => r.json())
+        .then(data => {
+          const container = document.getElementById('playlistResults');
+          container.innerHTML = '<h3>Your Playlist</h3>';
+          data.songs.forEach(song => {
+            const div = document.createElement('div');
+            div.className = 'song';
+            const tempo = song.tempo ? ` (${song.tempo} BPM)` : '';
+            div.textContent = `${song.title} - ${song.artist}${tempo}`;
+            container.appendChild(div);
+          });
+        });
     });
   </script>
 </body>
