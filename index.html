@@ -3,31 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Run & Groove - Playlist Generator</title>
+  <title>RunBeats</title>
   <style>
-    /* Modern CSS for a clean, responsive design */
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
-      padding: 0;
-      background: #f5f5f5;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
+      background: #f2f2f2;
+      color: #333;
     }
-    .container {
+    header {
+      background: linear-gradient(90deg, #ff5722, #ff9800);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+    }
+    #logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    nav a {
+      color: #fff;
+      margin-left: 1rem;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
       background: #fff;
       padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      max-width: 600px;
-      width: 90%;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
-    h1 {
-      text-align: center;
-      margin-bottom: 1.5rem;
-      color: #333;
+    section {
+      margin-bottom: 3rem;
+    }
+    h2 {
+      color: #ff5722;
+      margin-top: 0;
     }
     form {
       display: flex;
@@ -36,124 +55,122 @@
     }
     label {
       font-weight: bold;
-      margin-bottom: 0.5rem;
     }
-    input[type="text"],
-    input[type="number"] {
-      padding: 0.75rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+    input[type="text"], input[type="number"] {
+      padding: 0.5rem 0.75rem;
       font-size: 1rem;
-      width: 100%;
+      border-radius: 5px;
+      border: 1px solid #ccc;
     }
     button {
+      background: #ff5722;
+      color: #fff;
       padding: 0.75rem;
       border: none;
       border-radius: 5px;
-      background-color: #28a745;
-      color: #fff;
-      font-size: 1rem;
       cursor: pointer;
-      transition: background-color 0.3s;
+      font-size: 1rem;
     }
     button:hover {
-      background-color: #218838;
-    }
-    .playlist {
-      margin-top: 2rem;
-    }
-    .playlist h2 {
-      margin-bottom: 1rem;
-      color: #333;
+      background: #e64a19;
     }
     .song {
-      padding: 0.75rem;
+      padding: 0.5rem 0;
       border-bottom: 1px solid #eee;
-    }
-    @media (max-width: 600px) {
-      .container {
-        padding: 1rem;
-      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Run & Groove</h1>
-    <form id="playlistForm">
-      <div>
-        <label for="artists">Favorite Artists</label>
-        <input type="text" id="artists" placeholder="e.g. Drake, Beyonce" />
-      </div>
-      <div>
-        <label for="genres">Favorite Genres</label>
-        <input type="text" id="genres" placeholder="e.g. Hip-Hop, Pop" />
-      </div>
-      <div>
-        <label for="pace">Running Pace (min/km)</label>
-        <input type="number" id="pace" placeholder="e.g. 8" step="0.1" min="1" />
-      </div>
-      <button type="submit">Generate Playlist</button>
-    </form>
-    <div class="playlist" id="playlist">
-      <!-- Generated playlist will appear here -->
-    </div>
-  </div>
+  <header>
+    <div id="logo">RunBeats</div>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#playlist">Playlist</a>
+      <a href="#social">Social</a>
+      <a href="#strava">Strava</a>
+    </nav>
+  </header>
+  <main>
+    <section id="home">
+      <h2>Run to the Rhythm</h2>
+      <p>Create running playlists tailored to your pace and favourite music.</p>
+    </section>
+
+    <section id="playlist">
+      <h2>Generate Playlist</h2>
+      <form id="playlistForm">
+        <div>
+          <label for="artists">Favourite Artists</label>
+          <input type="text" id="artists" placeholder="e.g. Drake, Beyonce" />
+        </div>
+        <div>
+          <label for="genres">Favourite Genres</label>
+          <input type="text" id="genres" placeholder="e.g. Hip-Hop, Pop" />
+        </div>
+        <div>
+          <label for="pace">Running Pace (min/km)</label>
+          <input type="number" id="pace" placeholder="e.g. 5" step="0.1" min="1" />
+        </div>
+        <div>
+          <label for="distance">Race Distance (km)</label>
+          <input type="number" id="distance" placeholder="e.g. 10" step="0.1" min="1" />
+        </div>
+        <button type="submit">Generate</button>
+      </form>
+      <div class="playlist" id="playlistResults"></div>
+    </section>
+
+    <section id="social">
+      <h2>Social</h2>
+      <p>Coming soon: share your playlists and runs with friends.</p>
+    </section>
+
+    <section id="strava">
+      <h2>Strava Integration</h2>
+      <p>Connect your Strava account to see your activity alongside your playlists.</p>
+    </section>
+  </main>
 
   <script>
-    // Listen for form submission
     document.getElementById('playlistForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
-      // Retrieve user inputs
       const artistsInput = document.getElementById('artists').value;
       const genresInput = document.getElementById('genres').value;
       const paceInput = document.getElementById('pace').value;
 
-      // Process inputs into arrays (split by commas)
-      const artists = artistsInput.split(',').map(item => item.trim()).filter(Boolean);
-      const genres = genresInput.split(',').map(item => item.trim()).filter(Boolean);
+      const artists = artistsInput.split(',').map(a => a.trim()).filter(Boolean);
+      const genres = genresInput.split(',').map(g => g.trim()).filter(Boolean);
       const pace = parseFloat(paceInput);
 
-      // Sample song data (replace with API calls as needed)
       const sampleSongs = [
-        { title: "Run the World", artist: "Beyonce", genre: "Pop", tempo: 120 },
-        { title: "Fast Lane", artist: "Drake", genre: "Hip-Hop", tempo: 130 },
-        { title: "Chase the Light", artist: "Imagine Dragons", genre: "Rock", tempo: 125 },
-        { title: "Miles Ahead", artist: "Alicia Keys", genre: "Soul", tempo: 115 },
-        { title: "Endurance", artist: "Eminem", genre: "Hip-Hop", tempo: 128 }
+        { title: 'Run the World', artist: 'Beyonce', genre: 'Pop', tempo: 120 },
+        { title: 'Fast Lane', artist: 'Drake', genre: 'Hip-Hop', tempo: 130 },
+        { title: 'Chase the Light', artist: 'Imagine Dragons', genre: 'Rock', tempo: 125 },
+        { title: 'Miles Ahead', artist: 'Alicia Keys', genre: 'Soul', tempo: 115 },
+        { title: 'Endurance', artist: 'Eminem', genre: 'Hip-Hop', tempo: 128 }
       ];
 
-      // Filter sample songs based on user preferences.
-      // This demo uses a simple algorithm: it checks if the song's artist or genre includes any user input,
-      // and uses an arbitrary formula (desiredTempo = 240 / pace) to match tempo within a 15 BPM range.
       const desiredTempo = pace ? (240 / pace) : 120;
-      let filteredSongs = sampleSongs.filter(song => {
-        const matchesArtist = artists.length ? artists.some(a => song.artist.toLowerCase().includes(a.toLowerCase())) : true;
-        const matchesGenre = genres.length ? genres.some(g => song.genre.toLowerCase().includes(g.toLowerCase())) : true;
+      let filtered = sampleSongs.filter(song => {
+        const matchA = artists.length ? artists.some(a => song.artist.toLowerCase().includes(a.toLowerCase())) : true;
+        const matchG = genres.length ? genres.some(g => song.genre.toLowerCase().includes(g.toLowerCase())) : true;
         const tempoMatch = Math.abs(song.tempo - desiredTempo) < 15;
-        return matchesArtist && matchesGenre && tempoMatch;
+        return matchA && matchG && tempoMatch;
       });
 
-      // If no songs match, fallback to displaying all songs.
-      if (filteredSongs.length === 0) {
-        filteredSongs = sampleSongs;
-      }
+      if (filtered.length === 0) filtered = sampleSongs;
 
-      // CREATE PLAYLIST CALL TO SPOTIFY API WITH ARTIST + TEMPO DETAILS
-
-
-      // Display the generated playlist
-      //GET TO SPOTIFY TO DISPLAY PLAYLIST
-      const playlistContainer = document.getElementById('playlist');
-      playlistContainer.innerHTML = '<h2>Your Playlist</h2>';
-      filteredSongs.forEach(song => {
-        const songDiv = document.createElement('div');
-        songDiv.classList.add('song');
-        songDiv.textContent = `${song.title} - ${song.artist} [${song.genre}] (Tempo: ${song.tempo} BPM)`;
-        playlistContainer.appendChild(songDiv);
+      const container = document.getElementById('playlistResults');
+      container.innerHTML = '<h3>Your Playlist</h3>';
+      filtered.forEach(song => {
+        const div = document.createElement('div');
+        div.className = 'song';
+        div.textContent = `${song.title} - ${song.artist} (${song.tempo} BPM)`;
+        container.appendChild(div);
       });
     });
   </script>
 </body>
 </html>
+
