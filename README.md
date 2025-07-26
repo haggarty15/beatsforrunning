@@ -6,7 +6,7 @@ RunBeats is a simple demo web app that generates running playlists based on your
 
 - Lightweight single‑page UI with modern styling and navigation.
 - Form to collect favourite artists, genres, pace and distance.
-- Basic playlist generator that matches tempo to your pace.
+- Playlist generator that pulls tracks from Spotify matching your pace.
 - Placeholder sections for future social and Strava integration.
 
 ## Getting Started
@@ -25,8 +25,8 @@ RunBeats is a simple demo web app that generates running playlists based on your
    python spotify/client.py
    ```
 4. Open `index.html` in your browser and start generating playlists.
-
-The current playlist generation uses sample songs. Integrating with the Spotify endpoints in `spotify/client.py` is left as an exercise.
+   The page will request song suggestions from the Flask server which queries
+   the Spotify API using your credentials.
 
 ## License
 

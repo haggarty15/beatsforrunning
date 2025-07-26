@@ -27,6 +27,58 @@ def get_spotify_token():
     return response_data.get("access_token")
 
 
+def fetch_audio_features(token, track_ids):
+    """Return a mapping of track ID to audio features."""
+    headers = {"Authorization": f"Bearer {token}"}
+    url = f"{SPOTIFY_API_URL}/audio-features"
+    resp = requests.get(url, headers=headers, params={"ids": ",".join(track_ids)})
+    data = resp.json().get("audio_features", [])
+    return {f["id"]: f for f in data if f}
+
+
+@app.route('/songs', methods=['GET'])
+def get_songs():
+    """Return songs from Spotify matching the given artists/genres and pace."""
+    artists = request.args.get('artists', '')
+    genres = request.args.get('genres', '')
+    pace = request.args.get('pace', type=float)
+
+    token = get_spotify_token()
+    headers = {"Authorization": f"Bearer {token}"}
+
+    query_parts = []
+    if artists:
+        artist_terms = [f'artist:"{a.strip()}"' for a in artists.split(',') if a.strip()]
+        query_parts.extend(artist_terms)
+    if genres:
+        genre_terms = [g.strip() for g in genres.split(',') if g.strip()]
+        # Spotify search does not filter tracks by genre directly; include genres as plain terms
+        query_parts.extend(genre_terms)
+    query = ' '.join(query_parts) or 'music'
+
+    search_url = f"{SPOTIFY_API_URL}/search"
+    params = {"q": query, "type": "track", "limit": 20}
+    resp = requests.get(search_url, headers=headers, params=params)
+    items = resp.json().get('tracks', {}).get('items', [])
+
+    track_ids = [t['id'] for t in items]
+    features = fetch_audio_features(token, track_ids)
+
+    desired_tempo = 240 / pace if pace else None
+    songs = []
+    for track in items:
+        tempo = features.get(track['id'], {}).get('tempo')
+        if desired_tempo and tempo:
+            if abs(tempo - desired_tempo) > 15:
+                continue
+        songs.append({
+            'title': track['name'],
+            'artist': track['artists'][0]['name'],
+            'tempo': tempo
+        })
+
+    return jsonify({'songs': songs})
+
 # Query Reqs.
 # Artist List OR Genre
 # Pace OR BPM
