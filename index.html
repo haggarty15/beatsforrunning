@@ -132,6 +132,9 @@
   </main>
 
   <script>
+    // Set your backend base URL here. Use '' if frontend is served by Flask, or 'http://localhost:5000' for local dev.
+    const BASE_URL = 'http://localhost:5000';
+
     document.getElementById('playlistForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
@@ -148,7 +151,7 @@
       if (genres.length) params.append('genres', genres.join(','));
       if (!isNaN(pace)) params.append('pace', pace);
 
-      fetch(`/songs?${params.toString()}`)
+      fetch(`${BASE_URL}/songs?${params.toString()}`)
         .then(r => r.json())
         .then(data => {
           const container = document.getElementById('playlistResults');
