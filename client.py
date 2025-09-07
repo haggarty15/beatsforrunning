@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import requests
 import os
@@ -37,6 +37,15 @@ def fetch_audio_features(token, track_ids):
     data = resp.json().get("audio_features", [])
     return {f["id"]: f for f in data if f}
 
+@app.route('/')
+def serve_index():
+    print(f"Serving index.html from: {os.path.abspath('.')}")
+    return send_from_directory('.', 'index.html')
+
+@app.route('/favicon.ico')
+def favicon():
+    print(f"Serving favicon from: {os.path.abspath('.')}")
+    return send_from_directory('.', 'favicon.ico')
 
 @app.route('/songs', methods=['GET'])
 def get_songs():
