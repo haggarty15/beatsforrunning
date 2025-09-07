@@ -416,37 +416,40 @@
     document.getElementById('playlistForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
-      const artistsInput = document.getElementById('artists').value;
-      const genresInput = document.getElementById('genres').value;
       const paceInput = document.getElementById('pace').value;
 
-      const artists = artistsInput.split(',').map(a => a.trim()).filter(Boolean);
-      const genres = genresInput.split(',').map(g => g.trim()).filter(Boolean);
-      const pace = parseFloat(paceInput);
-
-      const params = new URLSearchParams();
-      if (artists.length) params.append('artists', artists.join(','));
-      if (genres.length) params.append('genres', genres.join(','));
-      if (!isNaN(pace)) params.append('pace', pace);
-
-      fetch(`${BASE_URL}/songs?${params.toString()}`)
-        .then(r => r.json())
+      fetch('/generate_playlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ pace: paceInput }),
+      })
+        .then(response => response.json())
         .then(data => {
-          const container = document.getElementById('playlistResults');
-          container.innerHTML = '<h3>Your Playlist</h3>';
-          data.songs.forEach(song => {
-            const div = document.createElement('div');
-            div.className = 'song';
-            const tempo = song.tempo ? ` (${song.tempo} BPM)` : '';
-            div.textContent = `${song.title} - ${song.artist}${tempo}`;
-            container.appendChild(div);
-          });
+          const playlistResults = document.getElementById('playlistResults');
+          playlistResults.innerHTML = '';
+
+          if (data.playlist && data.playlist.length > 0) {
+            data.playlist.forEach(song => {
+              const songElement = document.createElement('div');
+              songElement.className = 'song';
+              songElement.textContent = `${song.title} by ${song.artist} (Tempo: ${song.tempo})`;
+              playlistResults.appendChild(songElement);
+            });
+          } else {
+            playlistResults.textContent = 'No songs matched your pace.';
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred while generating the playlist.');
         });
     });
 
     document.getElementById('spotify-login-btn').addEventListener('click', () => {
-        authModal.style.display = 'flex';
-      });
+        window.location.href = '/login';
+    });
     
       closeAuthModal.addEventListener('click', () => {
         authModal.style.display = 'none';

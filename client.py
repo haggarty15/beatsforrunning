@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory, session
+from flask import Flask, request, jsonify, send_from_directory, session, redirect
 from flask_cors import CORS
 import requests
 import os
@@ -48,13 +48,31 @@ def get_spotify_token():
     return response_data.get("access_token")
 
 
+# Enhanced 'fetch_audio_features' to log track IDs and handle missing features
 def fetch_audio_features(token, track_ids):
     """Return a mapping of track ID to audio features."""
     headers = {"Authorization": f"Bearer {token}"}
     url = f"{SPOTIFY_API_URL}/audio-features"
+
+    print(f"Fetching audio features for track IDs: {track_ids}")
+
     resp = requests.get(url, headers=headers, params={"ids": ",".join(track_ids)})
+    print(f"Audio features response status: {resp.status_code}")
+    print(f"Audio features response body: {resp.text}")
+
     data = resp.json().get("audio_features", [])
-    return {f["id"]: f for f in data if f}
+
+    # Log each track's audio features for inspection
+    for feature in data:
+        print(f"Audio feature for track: {feature}")
+
+    # Handle cases where some tracks may not have audio features
+    features = {}
+    for feature in data:
+        if feature:  # Ensure the feature is not None
+            features[feature["id"]] = feature
+
+    return features
 
 @app.route('/')
 def serve_index():
@@ -66,48 +84,6 @@ def favicon():
     print(f"Serving favicon from: {os.path.abspath('.')}")
     return send_from_directory('.', 'favicon.ico')
 
-@app.route('/songs', methods=['GET'])
-def get_songs():
-    """Return songs from Spotify matching the given artists/genres and pace."""
-    artists = request.args.get('artists', '')
-    genres = request.args.get('genres', '')
-    pace = request.args.get('pace', type=float)
-
-    token = get_spotify_token()
-    headers = {"Authorization": f"Bearer {token}"}
-
-    query_parts = []
-    if artists:
-        artist_terms = [f'artist:"{a.strip()}"' for a in artists.split(',') if a.strip()]
-        query_parts.extend(artist_terms)
-    if genres:
-        genre_terms = [g.strip() for g in genres.split(',') if g.strip()]
-        # Spotify search does not filter tracks by genre directly; include genres as plain terms
-        query_parts.extend(genre_terms)
-    query = ' '.join(query_parts) or 'music'
-
-    search_url = f"{SPOTIFY_API_URL}/search"
-    params = {"q": query, "type": "track", "limit": 20}
-    resp = requests.get(search_url, headers=headers, params=params)
-    items = resp.json().get('tracks', {}).get('items', [])
-
-    track_ids = [t['id'] for t in items]
-    features = fetch_audio_features(token, track_ids)
-
-    desired_tempo = 240 / pace if pace else None
-    songs = []
-    for track in items:
-        tempo = features.get(track['id'], {}).get('tempo')
-        if desired_tempo and tempo:
-            if abs(tempo - desired_tempo) > 15:
-                continue
-        songs.append({
-            'title': track['name'],
-            'artist': track['artists'][0]['name'],
-            'tempo': tempo
-        })
-
-    return jsonify({'songs': songs})
 
 # Query Reqs.
 # Artist List OR Genre
@@ -174,6 +150,7 @@ def serve_strava():
     return send_from_directory('.', 'strava.html')
 
 
+# Update '/login' endpoint to redirect to Spotify authorization URL
 @app.route('/login')
 def login():
     scope = 'user-read-recently-played user-top-read playlist-modify-private'
@@ -184,15 +161,19 @@ def login():
         f"redirect_uri={SPOTIFY_REDIRECT_URI}&"
         f"scope={scope}"
     )
-    return jsonify({"auth_url": auth_url})
+    return redirect(auth_url)
 
 app.secret_key = os.getenv('SECRET_KEY', 'supersecretkey')
 
+# Update '/callback' endpoint to redirect to the home page after login
 @app.route('/callback')
 def callback():
     code = request.args.get('code')
     if not code:
+        print("Authorization code not provided")
         return jsonify({"error": "Authorization code not provided"}), 400
+
+    print(f"Authorization code received: {code}")
 
     token_response = requests.post(
         SPOTIFY_AUTH_URL,
@@ -204,33 +185,95 @@ def callback():
             "client_secret": SPOTIFY_CLIENT_SECRET,
         },
     )
+
+    print(f"Spotify token response status: {token_response.status_code}")
+    print(f"Spotify token response body: {token_response.text}")
+
     token_data = token_response.json()
     access_token = token_data.get('access_token')
     refresh_token = token_data.get('refresh_token')
 
     if not access_token:
+        print("Failed to retrieve access token")
         return jsonify({"error": "Failed to retrieve access token"}), 400
 
     # Store tokens in the session
     session['access_token'] = access_token
     session['refresh_token'] = refresh_token
 
-    return jsonify({"message": "Logged in successfully"})
+    print(f"Access token set in session: {access_token}")
 
+    # Redirect to the home page after successful login
+    return redirect('/')
+
+# Add token refreshing functionality
+def refresh_spotify_token():
+    refresh_token = session.get('refresh_token')
+    if not refresh_token:
+        print("No refresh token available in session")
+        return None
+
+    print("Refreshing Spotify access token...")
+    response = requests.post(
+        SPOTIFY_AUTH_URL,
+        {
+            "grant_type": "refresh_token",
+            "refresh_token": refresh_token,
+            "client_id": SPOTIFY_CLIENT_ID,
+            "client_secret": SPOTIFY_CLIENT_SECRET,
+        },
+    )
+
+    if response.status_code != 200:
+        print(f"Failed to refresh token: {response.status_code}, {response.text}")
+        return None
+
+    token_data = response.json()
+    access_token = token_data.get('access_token')
+    if access_token:
+        session['access_token'] = access_token
+        print(f"New access token set in session: {access_token}")
+    else:
+        print("Failed to retrieve new access token")
+
+    return access_token
+
+# Ensure tempo is retrieved for each song and matched against pace
 @app.route('/generate_playlist', methods=['POST'])
 def generate_playlist():
-    pace = request.json.get('pace')
+    pace = float(request.json.get('pace')) if request.json.get('pace') else None
     access_token = session.get('access_token')
+
+    print(f"Access token retrieved from session: {access_token}")
 
     if not access_token:
         return jsonify({"error": "User not logged in"}), 401
 
-    # Use the access token to fetch user data and generate a playlist
+    # Fetch user's top tracks
     headers = {"Authorization": f"Bearer {access_token}"}
-    user_profile = requests.get(f"{SPOTIFY_API_URL}/me", headers=headers).json()
+    top_tracks_url = f"{SPOTIFY_API_URL}/me/top/tracks"
+    response = requests.get(top_tracks_url, headers=headers, params={"limit": 50})
+    top_tracks = response.json().get('items', [])
 
-    # Stubbed response for playlist generation
-    return jsonify({"message": "Playlist generated successfully", "user": user_profile, "pace": pace})
+    track_ids = [track['id'] for track in top_tracks]
+    features = fetch_audio_features(access_token, track_ids)
+
+    desired_tempo = 240 / pace if pace else None
+    playlist = []
+    for track in top_tracks:
+        tempo = features.get(track['id'], {}).get('tempo')
+        if desired_tempo and tempo:
+            if abs(tempo - desired_tempo) > 15:
+                continue
+        playlist.append({
+            'title': track['name'],
+            'artist': track['artists'][0]['name'],
+            'tempo': tempo
+        })
+
+    print(f"Generated playlist: {playlist}")
+
+    return jsonify({'playlist': playlist})
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -268,6 +311,10 @@ def user_login():
     else:
         return jsonify({"error": "Invalid credentials"}), 401
 
+# Add debugging to check session contents
+@app.before_request
+def log_session_contents():
+    print(f"Session contents: {dict(session)}")
 
 if __name__ == '__main__':
     print("Booting up BeatsForRunning ...")
