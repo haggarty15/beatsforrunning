@@ -188,6 +188,122 @@
     #spotify-login-btn:hover {
       background: #1aa34a;
     }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .close-btn {
+      float: right;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    #auth-form div {
+      margin-bottom: 1rem;
+    }
+
+    #auth-form label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    #auth-form input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #auth-submit-btn {
+      background: #ff5722;
+      color: #fff;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      transition: background 0.3s;
+    }
+
+    #auth-submit-btn:hover {
+      background: #e64a19;
+    }
+
+    #toggle-auth {
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    #toggle-auth a {
+      color: #ff5722;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    #toggle-auth a:hover {
+      text-decoration: underline;
+    }
+
+    /* Additional styles for login modal */
+    #login-modal .modal-content {
+      max-width: 300px;
+    }
+
+    #login-form div {
+      margin-bottom: 1rem;
+    }
+
+    #login-form label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    #login-form input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #login-submit-btn {
+      background: #ff5722;
+      color: #fff;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      transition: background 0.3s;
+    }
+
+    #login-submit-btn:hover {
+      background: #e64a19;
+    }
   </style>
 </head>
 <body>
@@ -203,6 +319,7 @@
       <a href="/playlist">Playlist</a>
       <a href="/social">Social</a>
       <a href="/strava">Strava</a>
+      <a id="user-login" style="float: right; cursor: pointer;">Login</a>
     </nav>
   </header>
   <main>
@@ -249,6 +366,48 @@
     </section>
   </main>
 
+  <div id="auth-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" id="close-auth-modal">&times;</span>
+      <h2 id="auth-modal-title">Sign Up</h2>
+      <form id="auth-form">
+        <div>
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="Enter your username" required>
+        </div>
+        <div id="email-field">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="Enter your email" required>
+        </div>
+        <div>
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter your password" required>
+        </div>
+        <button type="submit" id="auth-submit-btn">Sign Up</button>
+      </form>
+      <p id="toggle-auth">Already have an account? <a href="#" id="toggle-auth-link">Log In</a></p>
+    </div>
+  </div>
+
+  <!-- Modal for User Login -->
+  <div id="login-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeLoginModal()">&times;</span>
+      <h2>User Login</h2>
+      <form id="login-form">
+        <div>
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="Enter your username" required />
+        </div>
+        <div>
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required />
+        </div>
+        <button type="button" id="login-submit-btn" onclick="submitLogin()">Login</button>
+      </form>
+    </div>
+  </div>
+
   <script>
     // Set your backend base URL here. Use '' if frontend is served by Flask, or 'http://localhost:5000' for local dev.
     const BASE_URL = 'http://localhost:5000';
@@ -286,16 +445,96 @@
     });
 
     document.getElementById('spotify-login-btn').addEventListener('click', () => {
-        fetch('/login')
-          .then(response => response.json())
-          .then(data => {
-            if (data.auth_url) {
-              window.location.href = data.auth_url;
+        authModal.style.display = 'flex';
+      });
+    
+      closeAuthModal.addEventListener('click', () => {
+        authModal.style.display = 'none';
+      });
+    
+      toggleAuthLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (authModalTitle.textContent === 'Sign Up') {
+          authModalTitle.textContent = 'Log In';
+          authSubmitBtn.textContent = 'Log In';
+          emailField.style.display = 'none';
+          toggleAuthLink.textContent = 'Sign Up';
+        } else {
+          authModalTitle.textContent = 'Sign Up';
+          authSubmitBtn.textContent = 'Sign Up';
+          emailField.style.display = 'block';
+          toggleAuthLink.textContent = 'Log In';
+        }
+      });
+    
+      authForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email')?.value;
+        const password = document.getElementById('password').value;
+    
+        const endpoint = authModalTitle.textContent === 'Sign Up' ? '/signup' : '/login';
+        const payload = { username, password };
+        if (email) payload.email = email;
+    
+        fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.error) {
+              alert(data.error);
             } else {
-              alert('Failed to initiate Spotify login.');
+              alert('Success!');
+              authModal.style.display = 'none';
             }
           });
       });
+
+    // Open the login modal
+    document.getElementById('user-login').addEventListener('click', function(event) {
+      event.preventDefault();
+      const modal = document.getElementById('login-modal');
+      if (modal) {
+        modal.style.display = 'flex';
+      } else {
+        console.error('Login modal not found');
+      }
+    });
+
+    // Close the login modal
+    function closeLoginModal() {
+      document.getElementById('login-modal').style.display = 'none';
+    }
+
+    // Submit login form
+    function submitLogin() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      fetch('/user_login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.message === 'Login successful') {
+            alert('Login successful!');
+            closeLoginModal();
+          } else {
+            alert(data.error || 'Login failed.');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred. Please try again.');
+        });
+    }
   </script>
 </body>
 </html>

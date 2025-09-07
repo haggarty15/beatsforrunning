@@ -1,20 +1,38 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, session
 from flask_cors import CORS
 import requests
 import os
 from dotenv import load_dotenv
+from flask_bcrypt import Bcrypt
+from flask_sqlalchemy import SQLAlchemy
 
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
+# Configure Flask-Bcrypt and Flask-SQLAlchemy
+bcrypt = Bcrypt(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+db = SQLAlchemy(app)
+
+# Spotify API credentials
 SPOTIFY_CLIENT_ID = os.getenv('CLIENT_ID')
 SPOTIFY_CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 SPOTIFY_AUTH_URL = "https://accounts.spotify.com/api/token"
 SPOTIFY_API_URL = "https://api.spotify.com/v1"
 SPOTIFY_REDIRECT_URI = os.getenv('REDIRECT_URI', 'http://localhost:5000/callback')
 
+# Database model for storing user information
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+
+# Create the database tables
+with app.app_context():
+    db.create_all()
 
 def get_spotify_token():
     print("Getting Spotify token ...")
@@ -168,6 +186,8 @@ def login():
     )
     return jsonify({"auth_url": auth_url})
 
+app.secret_key = os.getenv('SECRET_KEY', 'supersecretkey')
+
 @app.route('/callback')
 def callback():
     code = request.args.get('code')
@@ -191,21 +211,62 @@ def callback():
     if not access_token:
         return jsonify({"error": "Failed to retrieve access token"}), 400
 
-    # Stub: Store tokens in session or database (not implemented here)
-    return jsonify({"access_token": access_token, "refresh_token": refresh_token})
+    # Store tokens in the session
+    session['access_token'] = access_token
+    session['refresh_token'] = refresh_token
+
+    return jsonify({"message": "Logged in successfully"})
 
 @app.route('/generate_playlist', methods=['POST'])
 def generate_playlist():
-    # Stub: Use user preferences and play history to generate a playlist
-    data = request.json
-    pace = data.get('pace')
-    access_token = data.get('access_token')
+    pace = request.json.get('pace')
+    access_token = session.get('access_token')
 
     if not access_token:
-        return jsonify({"error": "Access token is required"}), 400
+        return jsonify({"error": "User not logged in"}), 401
 
-    # Stubbed response
-    return jsonify({"message": "Playlist generated successfully", "pace": pace})
+    # Use the access token to fetch user data and generate a playlist
+    headers = {"Authorization": f"Bearer {access_token}"}
+    user_profile = requests.get(f"{SPOTIFY_API_URL}/me", headers=headers).json()
+
+    # Stubbed response for playlist generation
+    return jsonify({"message": "Playlist generated successfully", "user": user_profile, "pace": pace})
+
+@app.route('/signup', methods=['POST'])
+def signup():
+    data = request.json
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
+
+    if not username or not email or not password:
+        return jsonify({"error": "All fields are required"}), 400
+
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    new_user = User(username=username, email=email, password=hashed_password)
+
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({"message": "User registered successfully"}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "User registration failed"}), 400
+
+@app.route('/user_login', methods=['POST'])
+def user_login():
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({"error": "All fields are required"}), 400
+
+    user = User.query.filter_by(username=username).first()
+    if user and bcrypt.check_password_hash(user.password, password):
+        return jsonify({"message": "Login successful"}), 200
+    else:
+        return jsonify({"error": "Invalid credentials"}), 401
 
 
 if __name__ == '__main__':
