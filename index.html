@@ -538,6 +538,46 @@
           alert('An error occurred. Please try again.');
         });
     }
+
+    // Add a button to verify the Spotify token
+    function addVerifyTokenButton() {
+      const verifyButton = document.createElement('button');
+      verifyButton.id = 'verify-token-btn';
+      verifyButton.textContent = 'Verify Spotify Token';
+      verifyButton.style.marginTop = '1rem';
+      verifyButton.onclick = () => {
+        fetch('/verify_token', {
+          method: 'GET',
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log('Token verification result:', data);
+            alert(JSON.stringify(data));
+          })
+          .catch((error) => {
+            console.error('Error verifying token:', error);
+            alert('Failed to verify token.');
+          });
+      };
+      document.body.appendChild(verifyButton);
+    }
+
+    // Ensure the button is added after successful Spotify login
+    window.addEventListener('load', () => {
+      fetch('/verify_token', {
+        method: 'GET',
+      })
+        .then((response) => {
+          if (response.ok) {
+            addVerifyTokenButton();
+          } else {
+            console.log('User not logged in or token invalid.');
+          }
+        })
+        .catch((error) => {
+          console.error('Error checking login status:', error);
+        });
+    });
   </script>
 </body>
 </html>

@@ -150,10 +150,10 @@ def serve_strava():
     return send_from_directory('.', 'strava.html')
 
 
-# Update '/login' endpoint to redirect to Spotify authorization URL
+# Update '/login' endpoint to include 'user-read-private' in the scope
 @app.route('/login')
 def login():
-    scope = 'user-read-recently-played user-top-read playlist-modify-private'
+    scope = 'user-read-recently-played user-top-read playlist-modify-private user-read-private'
     auth_url = (
         f"https://accounts.spotify.com/authorize?"
         f"client_id={SPOTIFY_CLIENT_ID}&"
@@ -315,6 +315,36 @@ def user_login():
 @app.before_request
 def log_session_contents():
     print(f"Session contents: {dict(session)}")
+
+# Add a function to verify the token and its scopes using the '/me' endpoint
+def verify_spotify_token():
+    access_token = session.get('access_token')
+    if not access_token:
+        print("No access token available in session")
+        return None
+
+    print("Verifying Spotify access token...")
+    headers = {"Authorization": f"Bearer {access_token}"}
+    me_url = f"{SPOTIFY_API_URL}/me"
+    response = requests.get(me_url, headers=headers)
+
+    print(f"/me endpoint response status: {response.status_code}")
+    print(f"/me endpoint response body: {response.text}")
+
+    if response.status_code != 200:
+        print("Failed to verify token")
+        return None
+
+    return response.json()
+
+# Add a route to expose the verify_spotify_token function
+@app.route('/verify_token', methods=['GET'])
+def verify_token_route():
+    result = verify_spotify_token()
+    if result:
+        return jsonify(result), 200
+    else:
+        return jsonify({"error": "Failed to verify token"}), 400
 
 if __name__ == '__main__':
     print("Booting up BeatsForRunning ...")
