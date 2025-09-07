@@ -13,6 +13,7 @@ SPOTIFY_CLIENT_ID = os.getenv('CLIENT_ID')
 SPOTIFY_CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 SPOTIFY_AUTH_URL = "https://accounts.spotify.com/api/token"
 SPOTIFY_API_URL = "https://api.spotify.com/v1"
+SPOTIFY_REDIRECT_URI = os.getenv('REDIRECT_URI', 'http://localhost:5000/callback')
 
 
 def get_spotify_token():
@@ -142,6 +143,69 @@ def create_playlist():
     playlist_url = f"{SPOTIFY_API_URL}/users/{user_id}/playlists"
     response = requests.post(playlist_url, headers=headers, json=payload)
     return jsonify(response.json())
+
+
+@app.route('/social')
+def serve_social():
+    print(f"Serving social.html from: {os.path.abspath('.')}")
+    return send_from_directory('.', 'social.html')
+
+@app.route('/strava')
+def serve_strava():
+    print(f"Serving strava.html from: {os.path.abspath('.')}")
+    return send_from_directory('.', 'strava.html')
+
+
+@app.route('/login')
+def login():
+    scope = 'user-read-recently-played user-top-read playlist-modify-private'
+    auth_url = (
+        f"https://accounts.spotify.com/authorize?"
+        f"client_id={SPOTIFY_CLIENT_ID}&"
+        f"response_type=code&"
+        f"redirect_uri={SPOTIFY_REDIRECT_URI}&"
+        f"scope={scope}"
+    )
+    return jsonify({"auth_url": auth_url})
+
+@app.route('/callback')
+def callback():
+    code = request.args.get('code')
+    if not code:
+        return jsonify({"error": "Authorization code not provided"}), 400
+
+    token_response = requests.post(
+        SPOTIFY_AUTH_URL,
+        {
+            "grant_type": "authorization_code",
+            "code": code,
+            "redirect_uri": SPOTIFY_REDIRECT_URI,
+            "client_id": SPOTIFY_CLIENT_ID,
+            "client_secret": SPOTIFY_CLIENT_SECRET,
+        },
+    )
+    token_data = token_response.json()
+    access_token = token_data.get('access_token')
+    refresh_token = token_data.get('refresh_token')
+
+    if not access_token:
+        return jsonify({"error": "Failed to retrieve access token"}), 400
+
+    # Stub: Store tokens in session or database (not implemented here)
+    return jsonify({"access_token": access_token, "refresh_token": refresh_token})
+
+@app.route('/generate_playlist', methods=['POST'])
+def generate_playlist():
+    # Stub: Use user preferences and play history to generate a playlist
+    data = request.json
+    pace = data.get('pace')
+    access_token = data.get('access_token')
+
+    if not access_token:
+        return jsonify({"error": "Access token is required"}), 400
+
+    # Stubbed response
+    return jsonify({"message": "Playlist generated successfully", "pace": pace})
 
 
 if __name__ == '__main__':

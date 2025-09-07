@@ -45,25 +45,28 @@
       margin-right: 0.5rem;
     }
 
+    nav {
+      margin-left: auto;
+    }
+
     nav a {
-      color: #fff;
       margin-left: 1rem;
       text-decoration: none;
-      font-weight: 500;
-      transition: color 0.3s;
+      color: #ff5722;
+      font-weight: bold;
     }
 
     nav a:hover {
-      color: #ff4081;
+      text-decoration: underline;
     }
 
     main {
-      max-width: 900px;
+      max-width: 100%;
       margin: 2rem auto;
-      background: rgba(255, 255, 255, 0.9);
       padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     section {
@@ -108,12 +111,14 @@
       color: #fff;
       padding: 0.75rem 1.5rem;
       border: none;
-      border-radius: 8px;
+      border-radius: 5px;
       cursor: pointer;
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: bold;
       text-transform: uppercase;
       transition: background 0.3s, transform 0.2s;
+      width: auto; /* Adjust width to fit content */
+      align-self: flex-start; /* Align with input boxes */
     }
 
     button:hover {
@@ -150,19 +155,54 @@
       from { opacity: 0; }
       to { opacity: 1; }
     }
+
+    .section-link {
+      text-decoration: none;
+      color: #ff5722;
+      transition: color 0.3s;
+    }
+
+    .section-link:hover {
+      color: #e64a19;
+      text-decoration: underline;
+    }
+
+    #spotify-login {
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    #spotify-login-btn {
+      background: #1DB954;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      transition: background 0.3s;
+    }
+
+    #spotify-login-btn:hover {
+      background: #1aa34a;
+    }
   </style>
 </head>
 <body>
   <header>
     <div id="logo">
-      <img src="/favicon.ico" alt="BeatsForRunning Logo" id="favicon-logo">
+      <a href="/">
+        <img src="/favicon.ico" alt="BeatsForRunning Logo" id="favicon-logo">
+      </a>
       BeatsForRunning
     </div>
     <nav>
-      <a href="#home">Home</a>
-      <a href="#playlist">Playlist</a>
-      <a href="#social">Social</a>
-      <a href="#strava">Strava</a>
+      <a href="/">Home</a>
+      <a href="/playlist">Playlist</a>
+      <a href="/social">Social</a>
+      <a href="/strava">Strava</a>
     </nav>
   </header>
   <main>
@@ -182,6 +222,9 @@
           <label for="genres">Favourite Genres</label>
           <input type="text" id="genres" placeholder="e.g. Hip-Hop, Pop" />
         </div>
+        <div id="spotify-login">
+          <button id="spotify-login-btn">Login with Spotify</button>
+        </div>
         <div>
           <label for="pace">Running Pace (min/km)</label>
           <input type="number" id="pace" placeholder="e.g. 5" step="0.1" min="1" />
@@ -196,12 +239,12 @@
     </section>
 
     <section id="social">
-      <h2>Social</h2>
+      <h2><a href="/social" class="section-link">Social</a></h2>
       <p>Coming soon: share your playlists and runs with friends.</p>
     </section>
 
     <section id="strava">
-      <h2>Strava Integration</h2>
+      <h2><a href="/strava" class="section-link">Strava Integration</a></h2>
       <p>Connect your Strava account to see your activity alongside your playlists.</p>
     </section>
   </main>
@@ -241,6 +284,18 @@
           });
         });
     });
+
+    document.getElementById('spotify-login-btn').addEventListener('click', () => {
+        fetch('/login')
+          .then(response => response.json())
+          .then(data => {
+            if (data.auth_url) {
+              window.location.href = data.auth_url;
+            } else {
+              alert('Failed to initiate Spotify login.');
+            }
+          });
+      });
   </script>
 </body>
 </html>
