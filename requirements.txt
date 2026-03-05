@@ -2,3 +2,5 @@ flask
 requests
 python-dotenv
 flask-cors
+flask-bcrypt
+flask-sqlalchemy
