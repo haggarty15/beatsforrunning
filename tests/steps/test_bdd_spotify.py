@@ -61,8 +61,6 @@ def genre_limits(context):
     context['genres'] = ["rock"]
     context['min_tempo'] = 150
     context['max_tempo'] = 160
-from responses import matchers
-
 @when('I get recommendations')
 def get_recommendations(context):
     with responses.RequestsMock() as rsps:

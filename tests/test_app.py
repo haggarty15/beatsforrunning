@@ -23,7 +23,7 @@ def test_get_spotify_conn_with_token(client):
     with patch("beatsforrunning.app.SpotifyConnector") as mock_conn_class:
         mock_instance = MagicMock()
         mock_conn_class.return_value = mock_instance
-        response = client.get("/api/user") # calls get_spotify_conn internally
+        client.get("/api/user") # calls get_spotify_conn internally
         assert mock_instance.token == "existing_token"
 
 def test_login(client):
@@ -131,7 +131,8 @@ def test_recommendations_no_genres(client):
         mock_conn_func.return_value = mock_conn
 
         response = client.post("/api/recommendations", json={"pace": "5:00"})
-        data = json.loads(response.data)
+        response = client.post("/api/recommendations", json={"pace": "5:00"})
+        assert json.loads(response.data)
         assert response.status_code == 200
 
 def test_recommendations_no_tracks_artist_error(client):
