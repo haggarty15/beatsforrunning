@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const embedContainer = document.getElementById('spotify-embed');
     const userStatus = document.getElementById('user-status');
     const heroSection = document.getElementById('hero-section');
+    const heroLogin = document.getElementById('hero-login-container');
+    const mainContainer = document.getElementById('main-app-container');
 
     let currentPlaylistUris = [];
 
@@ -20,6 +22,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span style="color: var(--text-dim); margin-right: 1rem;">Logged in as <strong>${user.display_name}</strong></span>
                     <a href="/logout" style="color: var(--accent-pink); font-size: 0.8rem;">Logout</a>
                 `;
+                // Show app, hide login CTA in hero
+                if (mainContainer) mainContainer.classList.remove('hidden');
+                if (heroLogin) heroLogin.classList.add('hidden');
+            } else {
+                // Not authenticated, ensure app is hidden
+                if (mainContainer) mainContainer.classList.add('hidden');
+                if (heroLogin) heroLogin.classList.remove('hidden');
+                // Hide header button to focus on hero CTA
+                userStatus.innerHTML = '';
             }
         } catch (err) {
             console.error('Auth check failed', err);
@@ -116,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderPlaylist(data) {
         const { bpm_range, playlist, warning, total_matches } = data;
 
-        if (heroSection) heroSection.style.display = 'none';
+        if (heroSection) heroSection.classList.add('hidden');
 
         bpmVal.innerText = bpm_range.optimal;
         currentPlaylistUris = playlist.tracks.map(t => t.uri);

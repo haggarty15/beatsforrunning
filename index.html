@@ -4,7 +4,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <meta name="description"
+    content="Sync your music with your stride. BeatsForRunning matches your pace to the perfect high-energy Spotify tracks for an optimal running experience." />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.pacebeats.run/" />
+  <meta property="og:title" content="BeatsForRunning | Sync Your Stride" />
+  <meta property="og:description"
+    content="Sync your music with your stride. Algorithms that match your running pace to high-energy Spotify tracks. Level up your run now." />
+  <meta property="og:image" content="https://www.pacebeats.run/static/og_preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://www.pacebeats.run/" />
+  <meta property="twitter:title" content="BeatsForRunning | Sync Your Stride" />
+  <meta property="twitter:description"
+    content="Sync your music with your stride. Algorithms that match your running pace to high-energy Spotify tracks. Level up your run now." />
+  <meta property="twitter:image" content="https://www.pacebeats.run/static/og_preview.png" />
+
+  <link rel="icon" href="/static/favicon.png" type="image/png">
   <title>BeatsForRunning | Sync Your Stride</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
   <style>
@@ -23,6 +44,10 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+    }
+
+    .hidden {
+      display: none !important;
     }
 
     body {
@@ -327,9 +352,14 @@
     <h1>Sync Your Music <br>With Your Stride.</h1>
     <p>Algorithms that match your running pace to the perfect Spotify tempo. Stay in the zone, every step of the way.
     </p>
+    <div id="hero-login-container">
+      <a href="/login" class="btn-generate"
+        style="background: var(--spotify-green); color: black; padding: 1.2rem 2.5rem; text-decoration: none; display: inline-block; font-size: 1.1rem;">Login
+        with Spotify to Start</a>
+    </div>
   </section>
 
-  <div class="main-container">
+  <div class="main-container hidden" id="main-app-container">
     <div class="glass-card">
       <form id="playlistForm">
         <div class="form-group">
