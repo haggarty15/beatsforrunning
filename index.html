@@ -55,6 +55,7 @@
       letter-spacing: 2px;
       background: linear-gradient(90deg, var(--accent-orange), var(--accent-pink));
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
       display: flex;
       align-items: center;
@@ -109,11 +110,14 @@
 
     .main-container {
       max-width: 1400px;
-      margin: 0 auto 4rem auto;
-      padding: 0 2rem;
+      margin: 3rem auto 4rem auto;
+      padding: 0 4rem;
+      /* Increased padding */
       display: grid;
-      grid-template-columns: 450px 1fr;
-      gap: 4rem;
+      grid-template-columns: 420px 1fr;
+      /* Slightly narrower left card */
+      gap: 3rem;
+      /* Reduced gap */
       align-items: start;
     }
 
@@ -309,14 +313,17 @@
 <body>
   <header>
     <div class="logo">BeatsForRunning</div>
-    <nav>
+    <nav id="nav-links">
       <a href="/" class="active">Home</a>
-      <a href="/social">Social</a>
-      <a href="/strava">Strava</a>
+      <div id="user-status" style="display: inline-block;">
+        <a href="/login"
+          style="background: var(--spotify-green); color: black; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 800;">Connect
+          Spotify</a>
+      </div>
     </nav>
   </header>
 
-  <section class="hero">
+  <section class="hero" id="hero-section">
     <h1>Sync Your Music <br>With Your Stride.</h1>
     <p>Algorithms that match your running pace to the perfect Spotify tempo. Stay in the zone, every step of the way.
     </p>
@@ -334,13 +341,21 @@
         </div>
 
         <div class="form-group">
-          <label>Music Preferences</label>
+          <label>Favorite Genres</label>
           <input type="text" id="genre" placeholder="Indie Rock, Techno, House...">
         </div>
 
         <div class="form-group">
+          <label>Favorite Artists (Optional)</label>
+          <input type="text" id="artists" placeholder="Linkin Park, Fred again.., ODESZA...">
+        </div>
+
+        <div class="form-group">
           <label>Distance</label>
-          <input type="number" id="distance" value="5.0" step="0.5">
+          <div class="pace-input-wrapper">
+            <input type="number" id="distance" value="5.0" step="0.5">
+            <span>km</span>
+          </div>
         </div>
 
         <button type="submit" class="btn-generate">Generate Run</button>

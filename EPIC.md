@@ -3,7 +3,7 @@
 > **Project:** BeatsForRunning
 > **Status:** 🚧 In Development
 > **Last Updated:** 2026-03-05
-> **Tickets:** 7/8 total
+> **Tickets:** 13/14 total
 
 ---
 
@@ -67,6 +67,12 @@ Runners often struggle to find music that consistently matches their stride and 
 | [TICKET-006](#ticket-006) | UI Redesign & Premium Aesthetics | P1-High | ✅ Done | `index.html`, `static/` | `TICKET-006-ui-v2.feature` |
 | [TICKET-007](#ticket-007) | Migrate Hosting to Google | P1-High | 📋 Planned | `GitHub Actions` | - |
 | [TICKET-008](#ticket-008) | Integrate Spotify Widget | P1-High | ✅ Done | `static/app.js` | `TICKET-008-spotify-widget.feature` |
+| [TICKET-009](#ticket-009) | Spotify User Auth (OAuth2) | P0-Critical | ✅ Done | `app.py`, `connectors/` | `TICKET-009-auth.feature` |
+| [TICKET-010](#ticket-010) | Search API Migration | P0-Critical | ✅ Done | `connectors/spotify.py` | - |
+| [TICKET-011](#ticket-011) | Artist & Genre Preferences | P1-High | ✅ Done | `index.html`, `app.py` | - |
+| [TICKET-012](#ticket-012) | Search Accuracy & Validation | P1-High | ✅ Done | `connectors/`, `app.js` | - |
+| [TICKET-013](#ticket-013) | Playlist Variety & Weighting | P1-High | ✅ Done | `connectors/`, `core/` | - |
+| [TICKET-014](#ticket-014) | Invalid Input Handling | P2-Medium | ✅ Done | `app.py`, `connectors/` | - |
 
 ---
 
