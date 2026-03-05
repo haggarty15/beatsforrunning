@@ -51,7 +51,7 @@ def login():
 @app.route("/callback")
 def callback():
     code = request.args.get("code")
-    print(f"Callback received with code: {code[:10]}...")
+    print(f"Callback received with code: {str(code)[:10]}...")
     if not code:
         return "No code provided", 400
 
