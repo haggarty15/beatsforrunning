@@ -53,6 +53,7 @@ Runners often struggle to find music that consistently matches their stride and 
 <a name="ticket-003"></a>
 <a name="ticket-004"></a>
 <a name="ticket-005"></a>
+<a name="ticket-006"></a>
 
 | ID | Title | Priority | Status | Source/Notes | BDD Feature |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -61,6 +62,7 @@ Runners often struggle to find music that consistently matches their stride and 
 | [TICKET-003](#ticket-003) | Spotify Integration | P0-Critical | ✅ Done | `connectors/spotify.py` | `TICKET-003-spotify.feature` |
 | [TICKET-004](#ticket-004) | Playlist Assembly Logic | P0-Critical | ✅ Done | `core/playlist.py` | `TICKET-004-assembly.feature` |
 | [TICKET-005](#ticket-005) | Web Interface (Flask UI) | P1-High | ✅ Done | `app.py`, `static/` | `TICKET-005-ui.feature` |
+| [TICKET-006](#ticket-006) | UI Redesign & Premium Aesthetics | P1-High | ✅ Done | `index.html`, `static/` | `TICKET-006-ui-v2.feature` |
 
 ---
 

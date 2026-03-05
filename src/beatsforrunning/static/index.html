@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <title>BeatsForRunning | Sync Your Stride</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0c0c0c;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --accent-orange: #FF5722;
+      --accent-pink: #FF4081;
+      --spotify-green: #1DB954;
+      --text-main: #ffffff;
+      --text-dim: #b3b3b3;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      overflow-x: hidden;
+      min-height: 100vh;
+      background: radial-gradient(circle at top right, #1a0f0f, var(--bg-color)),
+                  radial-gradient(circle at bottom left, #0f1a14, var(--bg-color));
+    }
+
+    header {
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, var(--accent-orange), var(--accent-pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo::before {
+      content: '⚡';
+      -webkit-text-fill-color: var(--accent-orange);
+    }
+
+    nav {
+      display: flex;
+      gap: 2rem;
+    }
+
+    nav a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    nav a:hover, nav a.active {
+      color: var(--text-main);
+      text-shadow: 0 0 10px var(--accent-orange);
+    }
+
+    .hero {
+      padding: 4rem 2rem;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero p {
+      color: var(--text-dim);
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .main-container {
+      max-width: 1200px;
+      margin: 0 auto 4rem auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 3rem;
+    }
+
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 2.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .form-group {
+      margin-bottom: 2rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.8rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+    }
+
+    input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      padding: 1rem 1.2rem;
+      border-radius: 12px;
+      color: white;
+      font-family: inherit;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--accent-orange);
+      box-shadow: 0 0 15px rgba(255, 87, 34, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .pace-input-wrapper {
+      position: relative;
+    }
+
+    .pace-input-wrapper span {
+      position: absolute;
+      right: 1.2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      font-weight: 600;
+    }
+
+    .btn-generate {
+      width: 100%;
+      background: linear-gradient(135deg, var(--accent-orange), var(--accent-pink));
+      color: white;
+      border: none;
+      padding: 1.2rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 20px rgba(255, 64, 129, 0.3);
+    }
+
+    .btn-generate:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(255, 64, 129, 0.5);
+    }
+
+    .visualizer-container {
+      margin-top: 2rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .bar {
+      width: 4px;
+      height: 10px;
+      background: var(--accent-pink);
+      border-radius: 2px;
+      transition: height 0.2s ease;
+      opacity: 0.5;
+    }
+
+    .bpm-display {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--accent-orange);
+    }
+
+    .bpm-label {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .playlist-results {
+      max-height: 800px;
+      overflow-y: auto;
+      padding-right: 1rem;
+    }
+
+    .playlist-results::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .playlist-results::-webkit-scrollbar-thumb {
+      background: var(--glass-border);
+      border-radius: 10px;
+    }
+
+    .track-card {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1.2rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 15px;
+      margin-bottom: 1rem;
+      border: 1px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .track-card:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--glass-border);
+      transform: translateX(5px);
+    }
+
+    .track-art {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(45deg, #333, #111);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .track-info {
+      flex-grow: 1;
+    }
+
+    .track-name {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .track-artist {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+
+    .track-uri {
+      color: var(--spotify-green);
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    @media (max-width: 900px) {
+      .main-container {
+        grid-template-columns: 1fr;
+      }
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">BeatsForRunning</div>
+    <nav>
+      <a href="/" class="active">Home</a>
+      <a href="/social">Social</a>
+      <a href="/strava">Strava</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Sync Your Music <br>With Your Stride.</h1>
+    <p>Algorithms that match your running pace to the perfect Spotify tempo. Stay in the zone, every step of the way.</p>
+  </section>
+
+  <div class="main-container">
+    <div class="glass-card">
+      <form id="playlistForm">
+        <div class="form-group">
+          <label>Target Running Pace</label>
+          <div class="pace-input-wrapper">
+            <input type="text" id="pace" placeholder="5:30" required pattern="^\d+:\d{2}$">
+            <span>min/km</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Music Preferences</label>
+          <input type="text" id="genre" placeholder="Indie Rock, Techno, House...">
+        </div>
+
+        <div class="form-group">
+          <label>Distance</label>
+          <input type="number" id="distance" value="5.0" step="0.5">
+        </div>
+
+        <button type="submit" class="btn-generate">Generate Run</button>
+      </form>
+
+      <div class="visualizer-container" id="visualizer">
+        <!-- Bars added via JS -->
+      </div>
+      <div class="bpm-display" id="bpm-val">--</div>
+      <div class="bpm-label">Estimated Target BPM</div>
+    </div>
+
+    <div class="playlist-results" id="playlistResults">
+      <!-- Tracks will appear here -->
+      <div style="text-align: center; color: var(--text-dim); margin-top: 4rem;">
+        <p>Set your pace to see your journey.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="static/app.js"></script>
+</body>
+</html>

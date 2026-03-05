@@ -22,11 +22,11 @@ spotify_conn = SpotifyConnector(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
 
 @app.route("/")
 def serve_index():
-    return send_from_directory("../../", "index.html")
+    return app.send_static_file("index.html")
 
 @app.route("/static/<path:path>")
 def serve_static(path):
-    return send_from_directory("../../static", path)
+    return send_from_directory("static", path)
 
 @app.route("/api/health")
 def health():
