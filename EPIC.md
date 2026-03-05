@@ -3,7 +3,7 @@
 > **Project:** BeatsForRunning
 > **Status:** 🚧 In Development
 > **Last Updated:** 2026-03-05
-> **Tickets:** 0/5 total
+> **Tickets:** 6/8 total
 
 ---
 
@@ -54,6 +54,8 @@ Runners often struggle to find music that consistently matches their stride and 
 <a name="ticket-004"></a>
 <a name="ticket-005"></a>
 <a name="ticket-006"></a>
+<a name="ticket-007"></a>
+<a name="ticket-008"></a>
 
 | ID | Title | Priority | Status | Source/Notes | BDD Feature |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -63,6 +65,8 @@ Runners often struggle to find music that consistently matches their stride and 
 | [TICKET-004](#ticket-004) | Playlist Assembly Logic | P0-Critical | ✅ Done | `core/playlist.py` | `TICKET-004-assembly.feature` |
 | [TICKET-005](#ticket-005) | Web Interface (Flask UI) | P1-High | ✅ Done | `app.py`, `static/` | `TICKET-005-ui.feature` |
 | [TICKET-006](#ticket-006) | UI Redesign & Premium Aesthetics | P1-High | ✅ Done | `index.html`, `static/` | `TICKET-006-ui-v2.feature` |
+| [TICKET-007](#ticket-007) | Migrate Hosting to Google | P1-High | 📋 Planned | `GitHub Actions` | - |
+| [TICKET-008](#ticket-008) | Integrate Spotify Widget | P1-High | 📋 Planned | `static/app.js` | `TICKET-008-spotify-widget.feature` |
 
 ---
 
@@ -73,11 +77,13 @@ beatsforrunning/
 ├── EPIC.md                          ← this file
 ├── Makefile
 ├── pyproject.toml
-├── requirements.txt
-├── .github/
-│   └── workflows/
-├── client.py
-├── main.py
+├── index.html
+├── static/
+├── src/
+│   └── beatsforrunning/
+│       ├── app.py
+│       ├── connectors/
+│       └── core/
 ├── tickets/
 └── tests/
 ```
