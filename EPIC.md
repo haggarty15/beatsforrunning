@@ -3,7 +3,7 @@
 > **Project:** BeatsForRunning
 > **Status:** 🚧 In Development
 > **Last Updated:** 2026-03-05
-> **Tickets:** 0/5 total
+> **Tickets:** 13/14 total
 
 ---
 
@@ -22,7 +22,7 @@ Runners often struggle to find music that consistently matches their stride and 
 ## Goals
 
 | # | Goal |
-|---|------|
+| :--- | :--- |
 | G1 | User can input their target running pace (e.g. min/km or min/mi). |
 | G2 | User can specify music preferences (favorite artists or genres). |
 | G3 | The system calculates a target BPM range based on the inputted running pace. |
@@ -39,7 +39,7 @@ Runners often struggle to find music that consistently matches their stride and 
 ## Architecture Decisions (ADRs)
 
 | ADR | Decision | Rationale |
-|-----|----------|-----------|
+| :--- | :--- | :--- |
 | ADR-1 | Python backend, direct API connection | Flask application provides the easiest way to bridge the Spotify API and simple UI. |
 | ADR-2 | `requests` for API calls | Straightforward HTTP interaction. |
 | ADR-3 | `pytest` + `ruff` + `mypy` | Ensures high code quality, typing confidence, and fast testing. |
@@ -48,13 +48,31 @@ Runners often struggle to find music that consistently matches their stride and 
 
 ## Ticket Index
 
+<a name="ticket-001"></a>
+<a name="ticket-002"></a>
+<a name="ticket-003"></a>
+<a name="ticket-004"></a>
+<a name="ticket-005"></a>
+<a name="ticket-006"></a>
+<a name="ticket-007"></a>
+<a name="ticket-008"></a>
+
 | ID | Title | Priority | Status | Source/Notes | BDD Feature |
-|----|-------|----------|--------|--------------|-------------|
+| :--- | :--- | :--- | :--- | :--- | :--- |
 | [TICKET-001](#ticket-001) | Backend Scaffold & Setup | P0-Critical | ✅ Done | `Makefile`, `pyproject` | - |
 | [TICKET-002](#ticket-002) | Pace to BPM Algorithm | P0-Critical | ✅ Done | `core/tempo.py` | `TICKET-002-tempo.feature` |
 | [TICKET-003](#ticket-003) | Spotify Integration | P0-Critical | ✅ Done | `connectors/spotify.py` | `TICKET-003-spotify.feature` |
 | [TICKET-004](#ticket-004) | Playlist Assembly Logic | P0-Critical | ✅ Done | `core/playlist.py` | `TICKET-004-assembly.feature` |
-| [TICKET-005](#ticket-005) | Web Interface (Flask UI) | P1-High | 📋 Planned | `app.py`, `templates/` | `TICKET-005-ui.feature` |
+| [TICKET-005](#ticket-005) | Web Interface (Flask UI) | P1-High | ✅ Done | `app.py`, `static/` | `TICKET-005-ui.feature` |
+| [TICKET-006](#ticket-006) | UI Redesign & Premium Aesthetics | P1-High | ✅ Done | `index.html`, `static/` | `TICKET-006-ui-v2.feature` |
+| [TICKET-007](#ticket-007) | Migrate Hosting to Google | P1-High | 📋 Planned | `GitHub Actions` | - |
+| [TICKET-008](#ticket-008) | Integrate Spotify Widget | P1-High | ✅ Done | `static/app.js` | `TICKET-008-spotify-widget.feature` |
+| [TICKET-009](#ticket-009) | Spotify User Auth (OAuth2) | P0-Critical | ✅ Done | `app.py`, `connectors/` | `TICKET-009-auth.feature` |
+| [TICKET-010](#ticket-010) | Search API Migration | P0-Critical | ✅ Done | `connectors/spotify.py` | - |
+| [TICKET-011](#ticket-011) | Artist & Genre Preferences | P1-High | ✅ Done | `index.html`, `app.py` | - |
+| [TICKET-012](#ticket-012) | Search Accuracy & Validation | P1-High | ✅ Done | `connectors/`, `app.js` | - |
+| [TICKET-013](#ticket-013) | Playlist Variety & Weighting | P1-High | ✅ Done | `connectors/`, `core/` | - |
+| [TICKET-014](#ticket-014) | Invalid Input Handling | P2-Medium | ✅ Done | `app.py`, `connectors/` | - |
 
 ---
 
@@ -65,11 +83,13 @@ beatsforrunning/
 ├── EPIC.md                          ← this file
 ├── Makefile
 ├── pyproject.toml
-├── requirements.txt
-├── .github/
-│   └── workflows/
-├── client.py
-├── main.py
+├── index.html
+├── static/
+├── src/
+│   └── beatsforrunning/
+│       ├── app.py
+│       ├── connectors/
+│       └── core/
 ├── tickets/
 └── tests/
 ```

@@ -1,6 +1,6 @@
 from pytest_bdd import scenario, given, when, then, parsers
 import pytest
-from core.tempo import calculate_target_bpm
+from beatsforrunning.core.tempo import calculate_target_bpm
 
 
 @scenario(

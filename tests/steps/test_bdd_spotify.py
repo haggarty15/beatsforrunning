@@ -1,7 +1,7 @@
 import pytest
 from pytest_bdd import scenario, given, when, then
 import responses
-from connectors.spotify import SpotifyConnector
+from beatsforrunning.connectors.spotify import SpotifyConnector
 
 @scenario('../features/TICKET-003-spotify.feature', 'Token retrieval on missing credentials')
 def test_spotify_no_creds():
