@@ -1,9 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('playlistForm');
-    const resultsDiv = document.getElementById('playlistResults');
+    const tracksList = document.getElementById('tracks-list');
     const bpmVal = document.getElementById('bpm-val');
     const visualizer = document.getElementById('visualizer');
     const paceInput = document.getElementById('pace');
+    const widgetContainer = document.getElementById('spotify-widget-container');
+    const embedContainer = document.getElementById('spotify-embed');
 
     // Initialize visualizer bars
     for (let i = 0; i < 30; i++) {
@@ -50,7 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const genre = document.getElementById('genre').value || 'rock';
         const distance = document.getElementById('distance').value;
 
-        resultsDiv.innerHTML = `
+        widgetContainer.style.display = 'none';
+        tracksList.innerHTML = `
             <div style="text-align: center; margin-top: 4rem;">
                 <div class="visualizer-container">
                     <div class="bar" style="animation: pulse 1s infinite"></div>
@@ -65,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     pace: pace,
-                    genres: genre.split(',').map(s => s.trim()),
+                    genres: genre.split(',').map(s => s.trim().toLowerCase().replace(/\s+/g, '-')),
                     distance: parseFloat(distance),
                     unit: 'min/km'
                 })
@@ -74,13 +77,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (data.error) {
-                resultsDiv.innerHTML = `<p style="color: var(--accent-pink); padding: 2rem;">Error: ${data.error}</p>`;
+                tracksList.innerHTML = `<p style="color: var(--accent-pink); padding: 2rem;">Error: ${data.error}</p>`;
                 return;
             }
 
             renderPlaylist(data);
         } catch (err) {
-            resultsDiv.innerHTML = `<p style="color: var(--accent-pink); padding: 2rem;">Error: ${err.message}</p>`;
+            tracksList.innerHTML = `<p style="color: var(--accent-pink); padding: 2rem;">Error: ${err.message}</p>`;
         }
     });
 
@@ -88,6 +91,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const { bpm_range, playlist } = data;
 
         bpmVal.innerText = bpm_range.optimal;
+
+        // Update Spotify Widget
+        const ids = playlist.tracks.map(t => t.id).join(',');
+        if (ids) {
+            const embedUrl = `https://open.spotify.com/embed/trackset/MyRun/${ids}`;
+            embedContainer.innerHTML = `
+                <iframe src="${embedUrl}" width="100%" height="450" frameborder="0" allowtransparency="true" allow="encrypted-media" style="border-radius: 12px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5);"></iframe>
+            `;
+            widgetContainer.style.display = 'block';
+        } else {
+            widgetContainer.style.display = 'none';
+        }
 
         let html = `
             <div style="margin-bottom: 2rem;">
@@ -109,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         });
 
-        resultsDiv.innerHTML = html;
+        tracksList.innerHTML = html;
         updateVisualizer(true);
     }
 });

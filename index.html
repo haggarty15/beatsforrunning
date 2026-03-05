@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -31,7 +32,7 @@
       overflow-x: hidden;
       min-height: 100vh;
       background: radial-gradient(circle at top right, #1a0f0f, var(--bg-color)),
-                  radial-gradient(circle at bottom left, #0f1a14, var(--bg-color));
+        radial-gradient(circle at bottom left, #0f1a14, var(--bg-color));
     }
 
     header {
@@ -80,7 +81,8 @@
       letter-spacing: 1px;
     }
 
-    nav a:hover, nav a.active {
+    nav a:hover,
+    nav a.active {
       color: var(--text-main);
       text-shadow: 0 0 10px var(--accent-orange);
     }
@@ -106,12 +108,13 @@
     }
 
     .main-container {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto 4rem auto;
       padding: 0 2rem;
       display: grid;
-      grid-template-columns: 1fr 1.5fr;
-      gap: 3rem;
+      grid-template-columns: 450px 1fr;
+      gap: 4rem;
+      align-items: start;
     }
 
     .glass-card {
@@ -120,7 +123,7 @@
       border: 1px solid var(--glass-border);
       border-radius: 20px;
       padding: 2.5rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
 
     .form-group {
@@ -266,7 +269,7 @@
       align-items: center;
       justify-content: center;
       font-size: 1.5rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
 
     .track-info {
@@ -295,12 +298,14 @@
       .main-container {
         grid-template-columns: 1fr;
       }
+
       .hero h1 {
         font-size: 2.5rem;
       }
     }
   </style>
 </head>
+
 <body>
   <header>
     <div class="logo">BeatsForRunning</div>
@@ -313,7 +318,8 @@
 
   <section class="hero">
     <h1>Sync Your Music <br>With Your Stride.</h1>
-    <p>Algorithms that match your running pace to the perfect Spotify tempo. Stay in the zone, every step of the way.</p>
+    <p>Algorithms that match your running pace to the perfect Spotify tempo. Stay in the zone, every step of the way.
+    </p>
   </section>
 
   <div class="main-container">
@@ -347,14 +353,19 @@
       <div class="bpm-label">Estimated Target BPM</div>
     </div>
 
-    <div class="playlist-results" id="playlistResults">
-      <!-- Tracks will appear here -->
-      <div style="text-align: center; color: var(--text-dim); margin-top: 4rem;">
-        <p>Set your pace to see your journey.</p>
+    <div class="playlist-results glass-card" id="playlistResults">
+      <div id="spotify-widget-container" style="margin-bottom: 2rem; display: none;">
+        <div id="spotify-embed"></div>
+      </div>
+      <div id="tracks-list">
+        <div style="text-align: center; color: var(--text-dim); margin-top: 4rem;">
+          <p>Set your pace to see your journey.</p>
+        </div>
       </div>
     </div>
   </div>
 
   <script src="static/app.js"></script>
 </body>
+
 </html>

@@ -4,7 +4,7 @@ from beatsforrunning.app import app
 import json
 import responses
 
-@scenario('../features/TICKET-005-ui.feature', 'Generate a playlist from the home page')
+@scenario('../features/TICKET-008-spotify-widget.feature', 'Spotify Widget reveal')
 def test_ui_playlist():
     pass
 
@@ -57,6 +57,7 @@ def submit_playlist(client, pace, genre):
         pytest.response = response
 
 @then('I should see a list of recommended tracks')
+@then('I should see the track list below the widget')
 def check_tracks():
     data = json.loads(pytest.response.data)
     assert 'playlist' in data
@@ -68,3 +69,18 @@ def check_bpm():
     data = json.loads(pytest.response.data)
     assert 'bpm_range' in data
     assert 'optimal' in data['bpm_range']
+
+@then('I should see the Spotify widget container')
+def check_widget_container():
+    # In API tests we verify the data presence
+    data = json.loads(pytest.response.data)
+    assert 'playlist' in data
+    assert len(data['playlist']['tracks']) > 0
+
+@then('the Spotify iframe should have a trackset URI')
+def check_iframe_uri_logic():
+    data = json.loads(pytest.response.data)
+    ids = [t['id'] for t in data['playlist']['tracks']]
+    assert len(ids) > 0
+    # The URI construction logic is in JS, so we confirm IDs are presence for it.
+
