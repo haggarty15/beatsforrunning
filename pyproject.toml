@@ -1,0 +1,39 @@
+[project]
+name = "beatsforrunning"
+version = "0.1.0"
+description = "Running playlist generation based on artist/genre + pace (tempo)"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "TICKET-001: Backend Scaffold",
+    "TICKET-002: Pace to BPM Algorithm",
+    "TICKET-003: Spotify Integration",
+    "TICKET-004: Playlist Assembly Logic",
+    "TICKET-005: Web Interface",
+]
+
+[tool.coverage.run]
+source = ["."]
+omit = ["tests/*", ".venv/*", "htmlcov/*", "*/__init__.py"]
+
+[tool.coverage.report]
+show_missing = true
+precision = 2
+fail_under = 80
+
+[tool.ruff]
+line-length = 100
+exclude = [
+    ".git",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".venv",
+    "venv",
+]
+
+[tool.mypy]
+ignore_missing_imports = true
+exclude = [".venv", "venv", "tests"]

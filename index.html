@@ -5,9 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <title>BeatsForRunning</title>
+  <link rel="stylesheet" href="static/leetify-theme.css">
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,500,700&display=swap" rel="stylesheet">
   <style>
+    /* Remove or override old styles that conflict with the new theme */
+    body, header, main, section, nav, #logo, nav a, main, h2 {
+      all: unset;
+    }
+
     body {
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      font-family: "Inter", sans-serif;
       margin: 0;
       background: linear-gradient(135deg, #ff5722, #ff9800, #ff4081);
       color: #333;
@@ -304,281 +311,113 @@
     #login-submit-btn:hover {
       background: #e64a19;
     }
+
+    /* New styles for modern layout */
+    nav {
+      background: #111;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+      position: relative;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #ff5722;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: #ff5722;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .card {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .btn {
+      background: #ff5722;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .btn:hover {
+      background: #e64a19;
+      transform: scale(1.05);
+    }
   </style>
 </head>
 <body>
-  <header>
-    <div id="logo">
-      <a href="/">
-        <img src="/favicon.ico" alt="BeatsForRunning Logo" id="favicon-logo">
-      </a>
-      BeatsForRunning
-    </div>
     <nav>
-      <a href="/">Home</a>
-      <a href="/playlist">Playlist</a>
-      <a href="/social">Social</a>
-      <a href="/strava">Strava</a>
-      <a id="user-login" style="float: right; cursor: pointer;">Login</a>
+      <div class="logo">BeatsForRunning</div>
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/social">Social</a>
+        <a href="/strava">Strava</a>
+        <a id="user-login" style="cursor:pointer;">Login</a>
+      </div>
     </nav>
-  </header>
-  <main>
-    <section id="home">
-      <h2>Run to the Rhythm</h2>
-      <p>Create running playlists tailored to your pace and favourite music.</p>
-    </section>
-
-    <section id="playlist">
-      <h2>Generate Playlist</h2>
-      <form id="playlistForm">
-        <div>
-          <label for="artists">Favourite Artists</label>
-          <input type="text" id="artists" placeholder="e.g. Drake, Beyonce" />
-        </div>
-        <div>
-          <label for="genres">Favourite Genres</label>
-          <input type="text" id="genres" placeholder="e.g. Hip-Hop, Pop" />
-        </div>
-        <div id="spotify-login">
-          <button id="spotify-login-btn">Login with Spotify</button>
-        </div>
-        <div>
-          <label for="pace">Running Pace (min/km)</label>
-          <input type="number" id="pace" placeholder="e.g. 5" step="0.1" min="1" />
-        </div>
-        <div>
-          <label for="distance">Race Distance (km)</label>
-          <input type="number" id="distance" placeholder="e.g. 10" step="0.1" min="1" />
-        </div>
-        <button type="submit">Generate</button>
-      </form>
-      <div class="playlist" id="playlistResults"></div>
-    </section>
-
-    <section id="social">
-      <h2><a href="/social" class="section-link">Social</a></h2>
-      <p>Coming soon: share your playlists and runs with friends.</p>
-    </section>
-
-    <section id="strava">
-      <h2><a href="/strava" class="section-link">Strava Integration</a></h2>
-      <p>Connect your Strava account to see your activity alongside your playlists.</p>
-    </section>
-  </main>
-
-  <div id="auth-modal" class="modal">
-    <div class="modal-content">
-      <span class="close-btn" id="close-auth-modal">&times;</span>
-      <h2 id="auth-modal-title">Sign Up</h2>
-      <form id="auth-form">
-        <div>
-          <label for="username">Username</label>
-          <input type="text" id="username" placeholder="Enter your username" required>
-        </div>
-        <div id="email-field">
-          <label for="email">Email</label>
-          <input type="email" id="email" placeholder="Enter your email" required>
-        </div>
-        <div>
-          <label for="password">Password</label>
-          <input type="password" id="password" placeholder="Enter your password" required>
-        </div>
-        <button type="submit" id="auth-submit-btn">Sign Up</button>
-      </form>
-      <p id="toggle-auth">Already have an account? <a href="#" id="toggle-auth-link">Log In</a></p>
+    <div class="container">
+      <div class="card">
+        <h1>Generate Your Running Playlist</h1>
+        <form id="playlistForm">
+          <label for="pace">Enter your pace (min/km):</label>
+          <input type="number" id="pace" name="pace" step="0.01" min="2" max="15" required />
+          <label for="artist">Favourite artist (optional):</label>
+          <input type="text" id="artist" name="artist" placeholder="e.g. Linkin Park" />
+          <label for="genre">Favourite genre (optional):</label>
+          <input type="text" id="genre" name="genre" placeholder="e.g. Rock" />
+          <button type="submit" class="btn">Generate Playlist</button>
+        </form>
+        <div id="playlistResults"></div>
+      </div>
+      <div class="card">
+        <h2>How It Works</h2>
+        <p>Connect your Spotify account, enter your running pace, and get a playlist of songs that match your tempo!</p>
+      </div>
     </div>
-  </div>
-
-  <!-- Modal for User Login -->
-  <div id="login-modal" class="modal">
-    <div class="modal-content">
-      <span class="close-btn" onclick="closeLoginModal()">&times;</span>
-      <h2>User Login</h2>
-      <form id="login-form">
-        <div>
-          <label for="username">Username</label>
-          <input type="text" id="username" name="username" placeholder="Enter your username" required />
-        </div>
-        <div>
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" placeholder="Enter your password" required />
-        </div>
-        <button type="button" id="login-submit-btn" onclick="submitLogin()">Login</button>
-      </form>
-    </div>
-  </div>
-
-  <script>
-    // Set your backend base URL here. Use '' if frontend is served by Flask, or 'http://localhost:5000' for local dev.
-    const BASE_URL = 'http://localhost:5000';
-    
-
-    document.getElementById('playlistForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const paceInput = document.getElementById('pace').value;
-
-      fetch('/generate_playlist', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ pace: paceInput }),
-      })
-        .then(response => response.json())
-        .then(data => {
-          const playlistResults = document.getElementById('playlistResults');
-          playlistResults.innerHTML = '';
-
-          if (data.playlist && data.playlist.length > 0) {
-            data.playlist.forEach(song => {
-              const songElement = document.createElement('div');
-              songElement.className = 'song';
-              songElement.textContent = `${song.title} by ${song.artist} (Tempo: ${song.tempo})`;
-              playlistResults.appendChild(songElement);
-            });
-          } else {
-            playlistResults.textContent = 'No songs matched your pace.';
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('An error occurred while generating the playlist.');
-        });
-    });
-
-    document.getElementById('spotify-login-btn').addEventListener('click', () => {
-        window.location.href = '/login';
-    });
-    
-      closeAuthModal.addEventListener('click', () => {
-        authModal.style.display = 'none';
-      });
-    
-      toggleAuthLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (authModalTitle.textContent === 'Sign Up') {
-          authModalTitle.textContent = 'Log In';
-          authSubmitBtn.textContent = 'Log In';
-          emailField.style.display = 'none';
-          toggleAuthLink.textContent = 'Sign Up';
-        } else {
-          authModalTitle.textContent = 'Sign Up';
-          authSubmitBtn.textContent = 'Sign Up';
-          emailField.style.display = 'block';
-          toggleAuthLink.textContent = 'Log In';
-        }
-      });
-    
-      authForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const username = document.getElementById('username').value;
-        const email = document.getElementById('email')?.value;
-        const password = document.getElementById('password').value;
-    
-        const endpoint = authModalTitle.textContent === 'Sign Up' ? '/signup' : '/login';
-        const payload = { username, password };
-        if (email) payload.email = email;
-    
-        fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.error) {
-              alert(data.error);
-            } else {
-              alert('Success!');
-              authModal.style.display = 'none';
-            }
-          });
-      });
-
-    // Open the login modal
-    document.getElementById('user-login').addEventListener('click', function(event) {
-      event.preventDefault();
-      const modal = document.getElementById('login-modal');
-      if (modal) {
-        modal.style.display = 'flex';
-      } else {
-        console.error('Login modal not found');
-      }
-    });
-
-    // Close the login modal
-    function closeLoginModal() {
-      document.getElementById('login-modal').style.display = 'none';
-    }
-
-    // Submit login form
-    function submitLogin() {
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-
-      fetch('/user_login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.message === 'Login successful') {
-            alert('Login successful!');
-            closeLoginModal();
-          } else {
-            alert(data.error || 'Login failed.');
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('An error occurred. Please try again.');
-        });
-    }
-
-    // Add a button to verify the Spotify token
-    function addVerifyTokenButton() {
-      const verifyButton = document.createElement('button');
-      verifyButton.id = 'verify-token-btn';
-      verifyButton.textContent = 'Verify Spotify Token';
-      verifyButton.style.marginTop = '1rem';
-      verifyButton.onclick = () => {
-        fetch('/verify_token', {
-          method: 'GET',
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            console.log('Token verification result:', data);
-            alert(JSON.stringify(data));
-          })
-          .catch((error) => {
-            console.error('Error verifying token:', error);
-            alert('Failed to verify token.');
-          });
-      };
-      document.body.appendChild(verifyButton);
-    }
-
-    // Ensure the button is added after successful Spotify login
-    window.addEventListener('load', () => {
-      fetch('/verify_token', {
-        method: 'GET',
-      })
-        .then((response) => {
-          if (response.ok) {
-            addVerifyTokenButton();
-          } else {
-            console.log('User not logged in or token invalid.');
-          }
-        })
-        .catch((error) => {
-          console.error('Error checking login status:', error);
-        });
-    });
-  </script>
-</body>
+    <script src="static/app.js"></script>
+  </body>
 </html>
 

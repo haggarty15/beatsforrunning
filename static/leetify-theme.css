@@ -1,0 +1,109 @@
+body {
+  background: #181A20;
+  color: #F3F6F9;
+  font-family: 'Inter', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+nav {
+  background: #23262F;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+nav .logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #00FFA3;
+  letter-spacing: 2px;
+}
+
+nav .nav-links {
+  display: flex;
+  gap: 2rem;
+}
+
+nav .nav-links a {
+  color: #F3F6F9;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+nav .nav-links a:hover {
+  color: #00FFA3;
+}
+
+.container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #23262F;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+}
+
+.card {
+  background: #23262F;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: none;
+}
+
+.card:hover {
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  transform: none;
+}
+
+h1, h2, h3 {
+  color: #00FFA3;
+  margin-top: 0;
+}
+
+button, .btn {
+  background: linear-gradient(90deg, #00FFA3 0%, #00B8FF 100%);
+  color: #181A20;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: box-shadow 0.2s, background 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+button:hover, .btn:hover {
+  background: linear-gradient(90deg, #00B8FF 0%, #00FFA3 100%);
+  color: #23262F;
+}
+
+input, select {
+  background: #181A20;
+  color: #F3F6F9;
+  border: 1px solid #2A2D3A;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem;
+  }
+  nav {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .nav-links {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
