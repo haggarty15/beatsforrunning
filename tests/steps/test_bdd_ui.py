@@ -29,19 +29,23 @@ def submit_playlist(client, pace, genre):
             status=200
         )
         # Mock Spotify Recommendations
+        import re
         rsps.add(
             responses.GET,
-            "https://api.spotify.com/v1/recommendations",
+            re.compile("https://api.spotify.com/v1/search.*"),
             json={
-                "tracks": [
-                    {
-                        "id": "1",
-                        "name": "Run Fast",
-                        "artists": [{"name": "The Runners"}],
-                        "duration_ms": 180000,
-                        "uri": "spotify:track:1"
-                    }
-                ]
+                "tracks": {
+                    "total": 1,
+                    "items": [
+                        {
+                            "id": "1",
+                            "name": "Run Fast",
+                            "artists": [{"name": "The Runners"}],
+                            "duration_ms": 180000,
+                            "uri": "spotify:track:1"
+                        }
+                    ]
+                }
             },
             status=200
         )

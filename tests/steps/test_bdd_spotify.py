@@ -20,8 +20,10 @@ def context():
     return {}
 
 @given('missing Spotify credentials')
-def missing_creds(context):
-    context['conn'] = SpotifyConnector(client_id="", client_secret="")
+def missing_creds(context, monkeypatch):
+    monkeypatch.delenv("CLIENT_ID", raising=False)
+    monkeypatch.delenv("CLIENT_SECRET", raising=False)
+    context['conn'] = SpotifyConnector()
 
 @when('I retrieve the token')
 def retrieve_token(context):
