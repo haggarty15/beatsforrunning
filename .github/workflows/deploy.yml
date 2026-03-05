@@ -1,0 +1,60 @@
+name: Deploy to Google Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+env:
+  PROJECT_ID: your-gcp-project-id  # TODO: Update with your GCP Project ID
+  REGION: us-central1              # TODO: Update with your preferred GCP region
+  SERVICE: beatsforrunning         # Name of the Cloud Run service
+  # For Workload Identity Federation (Recommended over Service Account Keys)
+  # WORKLOAD_IDENTITY_PROVIDER: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+  # SERVICE_ACCOUNT: 'my-service-account@my-project.iam.gserviceaccount.com'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write' # Required for Workload Identity Federation
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Uncomment for Workload Identity Federation authentication
+      # - name: Authenticate to Google Cloud
+      #   uses: google-github-actions/auth@v2
+      #   with:
+      #     workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+      #     service_account: ${{ env.SERVICE_ACCOUNT }}
+      
+      # Alternatively, using JSON key (less secure):
+      # - name: Authenticate to Google Cloud
+      #   uses: google-github-actions/auth@v2
+      #   with:
+      #     credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      # - name: Build and Push Container
+      #   run: |
+      #     gcloud auth configure-docker ${REGION}-docker.pkg.dev
+      #     docker build -t ${REGION}-docker.pkg.dev/${PROJECT_ID}/cloud-run-source-deploy/${SERVICE}:${GITHUB_SHA} .
+      #     docker push ${REGION}-docker.pkg.dev/${PROJECT_ID}/cloud-run-source-deploy/${SERVICE}:${GITHUB_SHA}
+
+      # - name: Deploy to Cloud Run
+      #   uses: google-github-actions/deploy-cloudrun@v2
+      #   with:
+      #     service: ${{ env.SERVICE }}
+      #     region: ${{ env.REGION }}
+      #     # image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE }}:${{ github.sha }}
+      #     source: .
+      #     env_vars: |
+      #       CLIENT_ID=${{ secrets.CLIENT_ID }}
+      #       CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}
+      #       # Explicitly omit REDIRECT_URI to let app.py generate it dynamically, or set it to https://[YOUR_CLOUD_RUN_URL]/callback
+      #       # REDIRECT_URI=https://app.pacebeats.run/callback
+      #       
+      #     # flags: '--domain pacebeats.run' # (Optional) Configure Custom Domain map

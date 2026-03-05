@@ -20,13 +20,26 @@ CORS(app)
 # Use the environment variables for Spotify
 SPOTIFY_CLIENT_ID = os.getenv("CLIENT_ID")
 SPOTIFY_CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-REDIRECT_URI = os.getenv("REDIRECT_URI", "http://127.0.0.1:5000/callback")
 
 
 # Connector instance
 def get_spotify_conn():
+    from flask import url_for
+
     token = session.get("spotify_token")
-    conn = SpotifyConnector(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, REDIRECT_URI)
+
+    # Dynamically generate the redirect URI for the current request context if missing
+    redirect_uri = os.getenv("REDIRECT_URI")
+    if not redirect_uri:
+        try:
+            redirect_uri = url_for("callback", _external=True)
+            # Ensure it uses HTTPS in production
+            if "localhost" not in redirect_uri and "127.0.0.1" not in redirect_uri:
+                redirect_uri = redirect_uri.replace("http://", "https://")
+        except RuntimeError:
+            redirect_uri = "http://127.0.0.1:5000/callback"
+
+    conn = SpotifyConnector(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, redirect_uri)
     if token:
         conn.token = token
     return conn
