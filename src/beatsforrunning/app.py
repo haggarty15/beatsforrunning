@@ -9,7 +9,11 @@ from beatsforrunning.core.playlist import PlaylistGenerator
 
 load_dotenv()
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_folder=os.path.abspath(os.path.join(os.path.dirname(__file__), "../../static")),
+    static_url_path="/static"
+)
 app.secret_key = os.getenv("SECRET_KEY", "super-secret-running-key")
 CORS(app)
 
@@ -20,13 +24,14 @@ SPOTIFY_CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 # Connector instance
 spotify_conn = SpotifyConnector(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
 
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+
 @app.route("/")
 def serve_index():
-    return app.send_static_file("index.html")
+    # Look for index.html at the repo root
+    return send_from_directory(BASE_DIR, "index.html")
 
-@app.route("/static/<path:path>")
-def serve_static(path):
-    return send_from_directory("static", path)
+# Default static route will handle /static/ automatically now
 
 @app.route("/api/health")
 def health():
