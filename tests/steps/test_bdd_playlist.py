@@ -1,6 +1,6 @@
 import pytest
 from pytest_bdd import scenario, given, when, then, parsers
-from core.playlist import PlaylistGenerator
+from beatsforrunning.core.playlist import PlaylistGenerator
 
 @scenario('../features/TICKET-004-assembly.feature', 'Calculate total duration for a 5km run at 6:00 pace')
 def test_calc_duration():

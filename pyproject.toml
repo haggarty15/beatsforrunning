@@ -3,6 +3,25 @@ name = "beatsforrunning"
 version = "0.1.0"
 description = "Running playlist generation based on artist/genre + pace (tempo)"
 requires-python = ">=3.11"
+dependencies = [
+    "flask",
+    "flask-cors",
+    "flask-bcrypt",
+    "flask-sqlalchemy",
+    "requests",
+    "python-dotenv",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "pytest-bdd",
+    "pytest-httpx",
+    "ruff",
+    "mypy",
+    "responses",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -15,7 +34,7 @@ markers = [
 ]
 
 [tool.coverage.run]
-source = ["."]
+source = ["src/beatsforrunning"]
 omit = ["tests/*", ".venv/*", "htmlcov/*", "*/__init__.py"]
 
 [tool.coverage.report]

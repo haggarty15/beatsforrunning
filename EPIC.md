@@ -22,7 +22,7 @@ Runners often struggle to find music that consistently matches their stride and 
 ## Goals
 
 | # | Goal |
-|---|------|
+| :--- | :--- |
 | G1 | User can input their target running pace (e.g. min/km or min/mi). |
 | G2 | User can specify music preferences (favorite artists or genres). |
 | G3 | The system calculates a target BPM range based on the inputted running pace. |
@@ -39,7 +39,7 @@ Runners often struggle to find music that consistently matches their stride and 
 ## Architecture Decisions (ADRs)
 
 | ADR | Decision | Rationale |
-|-----|----------|-----------|
+| :--- | :--- | :--- |
 | ADR-1 | Python backend, direct API connection | Flask application provides the easiest way to bridge the Spotify API and simple UI. |
 | ADR-2 | `requests` for API calls | Straightforward HTTP interaction. |
 | ADR-3 | `pytest` + `ruff` + `mypy` | Ensures high code quality, typing confidence, and fast testing. |
@@ -48,13 +48,19 @@ Runners often struggle to find music that consistently matches their stride and 
 
 ## Ticket Index
 
+<a name="ticket-001"></a>
+<a name="ticket-002"></a>
+<a name="ticket-003"></a>
+<a name="ticket-004"></a>
+<a name="ticket-005"></a>
+
 | ID | Title | Priority | Status | Source/Notes | BDD Feature |
-|----|-------|----------|--------|--------------|-------------|
+| :--- | :--- | :--- | :--- | :--- | :--- |
 | [TICKET-001](#ticket-001) | Backend Scaffold & Setup | P0-Critical | ✅ Done | `Makefile`, `pyproject` | - |
 | [TICKET-002](#ticket-002) | Pace to BPM Algorithm | P0-Critical | ✅ Done | `core/tempo.py` | `TICKET-002-tempo.feature` |
 | [TICKET-003](#ticket-003) | Spotify Integration | P0-Critical | ✅ Done | `connectors/spotify.py` | `TICKET-003-spotify.feature` |
 | [TICKET-004](#ticket-004) | Playlist Assembly Logic | P0-Critical | ✅ Done | `core/playlist.py` | `TICKET-004-assembly.feature` |
-| [TICKET-005](#ticket-005) | Web Interface (Flask UI) | P1-High | 📋 Planned | `app.py`, `templates/` | `TICKET-005-ui.feature` |
+| [TICKET-005](#ticket-005) | Web Interface (Flask UI) | P1-High | ✅ Done | `app.py`, `static/` | `TICKET-005-ui.feature` |
 
 ---
 

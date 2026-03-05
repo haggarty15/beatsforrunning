@@ -14,7 +14,7 @@ PYTHON    ?= python
 PIP       ?= pip
 VENV      := .venv
 TEST_DIR  := tests
-SRC_DIR   := .
+SRC_DIR   := src/beatsforrunning
 
 ifeq ($(OS),Windows_NT)
 	VENV_BIN := $(VENV)/Scripts
@@ -44,8 +44,7 @@ venv:          ## Create a local virtual environment
 
 .PHONY: install
 install:       ## Install package dependencies
-	$(PIP) install -r requirements.txt
-	$(PIP) install pytest pytest-cov ruff mypy pytest-bdd
+	$(PIP) install -e ".[dev]"
 
 # ------------------------------------------------------------------------------
 # Testing
@@ -81,7 +80,7 @@ check: lint format typecheck test  ## Run all quality checks (lint + format + ty
 # ------------------------------------------------------------------------------
 .PHONY: run
 run:           ## Run the web server
-	$(PYTHON) client.py
+	$(PYTHON) -m beatsforrunning.app
 
 # ------------------------------------------------------------------------------
 # Cleanup
