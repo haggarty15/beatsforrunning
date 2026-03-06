@@ -38,14 +38,20 @@ def test_login(client):
 
 def test_callback_no_code(client):
     response = client.get("/callback")
-    assert response.status_code == 400
+    assert response.status_code == 302
+    assert "auth_error=no_code" in response.headers["Location"]
+
+def test_callback_spotify_error(client):
+    response = client.get("/callback?error=access_denied")
+    assert response.status_code == 302
+    assert "auth_error=access_denied" in response.headers["Location"]
 
 def test_callback_success(client):
     with patch("beatsforrunning.app.get_spotify_conn") as mock_conn_func:
         mock_conn = MagicMock()
         mock_conn.get_token_from_code.return_value = "fake_token"
         mock_conn_func.return_value = mock_conn
-        
+
         response = client.get("/callback?code=abc1234567890")
         assert response.status_code == 302
         with client.session_transaction() as sess:
@@ -56,9 +62,10 @@ def test_callback_error(client):
         mock_conn = MagicMock()
         mock_conn.get_token_from_code.side_effect = Exception("Auth Error")
         mock_conn_func.return_value = mock_conn
-        
+
         response = client.get("/callback?code=abc1234567890")
-        assert response.status_code == 500
+        assert response.status_code == 302
+        assert "auth_error=token_exchange_failed" in response.headers["Location"]
 
 def test_get_user_no_token(client):
     response = client.get("/api/user")
