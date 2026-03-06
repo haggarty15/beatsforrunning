@@ -1,0 +1,49 @@
+name: Deploy to Google Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+env:
+  PROJECT_ID: beatsforrunning-20260305
+  REGION: us-central1
+  SERVICE: beatsforrunning
+  # For Workload Identity Federation (Recommended over Service Account Keys)
+  # WORKLOAD_IDENTITY_PROVIDER: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+  # SERVICE_ACCOUNT: 'github-deployer@beatsforrunning-20260305.iam.gserviceaccount.com' # (optional, not needed when using credentials_json)
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write' # Required for Workload Identity Federation
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      # Using JSON key (less secure) – this is the only auth step now
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Build and Push Container
+        run: |
+          gcloud auth configure-docker ${REGION}-docker.pkg.dev
+          docker build -t ${REGION}-docker.pkg.dev/${PROJECT_ID}/beatsforrunning-repo/${SERVICE}:${GITHUB_SHA} .
+          docker push ${REGION}-docker.pkg.dev/${PROJECT_ID}/beatsforrunning-repo/${SERVICE}:${GITHUB_SHA}
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ env.SERVICE }}
+          region: ${{ env.REGION }}
+          image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/beatsforrunning-repo/${{ env.SERVICE }}:${{ github.sha }}
+          env_vars: |
+            CLIENT_ID=${{ secrets.CLIENT_ID }}
+            CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}
+            
+          # flags: '--domain pacebeats.run' # (Optional) Configure Custom Domain map

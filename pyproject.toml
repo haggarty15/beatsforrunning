@@ -10,6 +10,7 @@ dependencies = [
     "flask-sqlalchemy",
     "requests",
     "python-dotenv",
+    "gunicorn",
 ]
 
 [project.optional-dependencies]
