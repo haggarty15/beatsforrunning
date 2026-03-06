@@ -11,7 +11,7 @@ load_dotenv()
 
 app = Flask(
     __name__,
-    static_folder=os.path.abspath(os.path.join(os.path.dirname(__file__), "../../static")),
+    static_folder=os.path.join(os.getenv("APP_HOME", os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))), "static"),
     static_url_path="/static",
 )
 app.secret_key = os.getenv("SECRET_KEY", "super-secret-running-key")
