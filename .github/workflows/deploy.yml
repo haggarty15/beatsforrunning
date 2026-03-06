@@ -41,12 +41,9 @@ jobs:
         with:
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
-          # image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/beatsforrunning-repo/${{ env.SERVICE }}:${{ github.sha }}
-          source: .
+          image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/beatsforrunning-repo/${{ env.SERVICE }}:${{ github.sha }}
           env_vars: |
             CLIENT_ID=${{ secrets.CLIENT_ID }}
             CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}
-            # Explicitly omit REDIRECT_URI to let app.py generate it dynamically, or set it to https://[YOUR_CLOUD_RUN_URL]/callback
-            # REDIRECT_URI=https://app.pacebeats.run/callback
             
           # flags: '--domain pacebeats.run' # (Optional) Configure Custom Domain map
