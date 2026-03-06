@@ -7,9 +7,9 @@ on:
       - develop
 
 env:
-  PROJECT_ID: beatsforrunning-20260305  # TODO: Update with your GCP Project ID
-  REGION: us-central1              # TODO: Update with your preferred GCP region
-  SERVICE: beatsforrunning         # Name of the Cloud Run service
+  PROJECT_ID: beatsforrunning-20260305
+  REGION: us-central1
+  SERVICE: beatsforrunning
   # For Workload Identity Federation (Recommended over Service Account Keys)
   # WORKLOAD_IDENTITY_PROVIDER: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
   # SERVICE_ACCOUNT: 'github-deployer@beatsforrunning-20260305.iam.gserviceaccount.com' # (optional, not needed when using credentials_json)
@@ -33,15 +33,15 @@ jobs:
       - name: Build and Push Container
         run: |
           gcloud auth configure-docker ${REGION}-docker.pkg.dev
-          docker build -t ${REGION}-docker.pkg.dev/${PROJECT_ID}/cloud-run-source-deploy/${SERVICE}:${GITHUB_SHA} .
-          docker push ${REGION}-docker.pkg.dev/${PROJECT_ID}/cloud-run-source-deploy/${SERVICE}:${GITHUB_SHA}
+          docker build -t ${REGION}-docker.pkg.dev/${PROJECT_ID}/beatsforrunning-repo/${SERVICE}:${GITHUB_SHA} .
+          docker push ${REGION}-docker.pkg.dev/${PROJECT_ID}/beatsforrunning-repo/${SERVICE}:${GITHUB_SHA}
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
-          # image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cloud-run-source-deploy/${{ env.SERVICE }}:${{ github.sha }}
+          # image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/beatsforrunning-repo/${{ env.SERVICE }}:${{ github.sha }}
           source: .
           env_vars: |
             CLIENT_ID=${{ secrets.CLIENT_ID }}
