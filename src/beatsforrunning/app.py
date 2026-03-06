@@ -45,7 +45,7 @@ def get_spotify_conn():
     return conn
 
 
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+BASE_DIR = os.getenv("APP_HOME", os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
 
 @app.route("/")
