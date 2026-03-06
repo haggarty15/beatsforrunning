@@ -12,7 +12,7 @@ env:
   SERVICE: beatsforrunning         # Name of the Cloud Run service
   # For Workload Identity Federation (Recommended over Service Account Keys)
   # WORKLOAD_IDENTITY_PROVIDER: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
-  SERVICE_ACCOUNT: 'github-deployer@beatsforrunning-20260305.iam.gserviceaccount.com'
+  # SERVICE_ACCOUNT: 'github-deployer@beatsforrunning-20260305.iam.gserviceaccount.com' # (optional, not needed when using credentials_json)
 
 jobs:
   deploy:
@@ -24,11 +24,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ env.SERVICE_ACCOUNT }}
+      # Using JSON key (less secure) – this is the only auth step now
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
