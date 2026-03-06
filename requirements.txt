@@ -5,3 +5,4 @@ flask-cors
 flask-bcrypt
 flask-sqlalchemy
 gunicorn
+types-requests
