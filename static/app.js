@@ -39,6 +39,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     checkAuth();
 
+    // Show a friendly message if Spotify redirected back with an auth error
+    const urlParams = new URLSearchParams(window.location.search);
+    const authError = urlParams.get('auth_error');
+    if (authError) {
+        const messages = {
+            'access_denied': 'Spotify login was cancelled. Please try again.',
+            'token_exchange_failed': 'Could not complete Spotify login. Please try again.',
+            'no_code': 'Spotify login did not complete. Please try again.',
+        };
+        const msg = messages[authError] || 'Spotify login failed. Please try again.';
+        const heroLogin = document.getElementById('hero-login-container');
+        if (heroLogin) {
+            const errorEl = document.createElement('p');
+            errorEl.style.cssText = 'color: var(--accent-pink); margin-top: 1rem; font-size: 0.95rem;';
+            errorEl.textContent = msg;
+            heroLogin.appendChild(errorEl);
+        }
+        window.history.replaceState({}, document.title, '/');
+    }
+
     // Initialize visualizer bars
     for (let i = 0; i < 30; i++) {
         const bar = document.createElement('div');

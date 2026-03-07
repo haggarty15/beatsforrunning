@@ -63,10 +63,16 @@ def login():
 
 @app.route("/callback")
 def callback():
+    # Spotify sends ?error=access_denied (or similar) when auth fails or is cancelled
+    error = request.args.get("error")
+    if error:
+        print(f"Spotify auth error: {error}")
+        return redirect(f"/?auth_error={error}")
+
     code = request.args.get("code")
-    print(f"Callback received with code: {str(code)[:10]}...")
+    print(f"Callback received with code: {str(code)[:10] if code else 'None'}...")
     if not code:
-        return "No code provided", 400
+        return redirect("/?auth_error=no_code")
 
     try:
         conn = get_spotify_conn()
@@ -76,7 +82,7 @@ def callback():
         return redirect("/")
     except Exception as e:
         print(f"Error in callback: {e}")
-        return f"Auth Error: {e}", 500
+        return redirect("/?auth_error=token_exchange_failed")
 
 
 @app.route("/api/user")
