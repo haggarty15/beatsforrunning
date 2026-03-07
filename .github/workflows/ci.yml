@@ -24,8 +24,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pytest pytest-cov ruff mypy pytest-bdd
+          pip install -e .
+          pip install pytest pytest-cov ruff mypy pytest-bdd types-requests responses
 
       - name: Lint with Ruf
         run: |

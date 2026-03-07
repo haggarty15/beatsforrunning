@@ -19,7 +19,15 @@ def app_running(client):
     pass
 
 @when(parsers.parse('I submit a pace of "{pace}" and genre "{genre}"'))
-def submit_playlist(client, pace, genre):
+def submit_playlist(client, pace, genre, monkeypatch):
+    # Set environment variables so SpotifyConnector fallback works
+    monkeypatch.setenv("CLIENT_ID", "test_client_id")
+    monkeypatch.setenv("CLIENT_SECRET", "test_client_secret")
+    
+    # Also attempt to patch the module-level variables
+    monkeypatch.setattr("beatsforrunning.app.SPOTIFY_CLIENT_ID", "test_client_id")
+    monkeypatch.setattr("beatsforrunning.app.SPOTIFY_CLIENT_SECRET", "test_client_secret")
+    
     with responses.RequestsMock() as rsps:
         # Mock Spotify Auth
         rsps.add(
